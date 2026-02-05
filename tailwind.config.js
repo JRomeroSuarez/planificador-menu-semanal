@@ -10,12 +10,13 @@ export default {
     theme: {
         extend: {
             colors: {
-                "primary-custom": "#3713ec",
+                "primary": "#3713ec",
                 "background-light": "#f6f6f8",
                 "background-dark": "#131022",
             },
             fontFamily: {
-                "display": ["Inter", "sans-serif"]
+                "display": ["Work Sans", "sans-serif"],
+                "sans": ["Work Sans", "sans-serif"]
             },
         },
     },
