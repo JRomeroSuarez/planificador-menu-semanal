@@ -199,7 +199,7 @@ const RecipeDetail = () => {
 
                 <Card className="shadow-none border border-divider bg-white/50 dark:bg-slate-900/50 p-2">
                     <CardBody className="p-6">
-                        <h5 className="text-[10px] font-black text-default-400 uppercase tracking-widest mb-6">IA Chef Tips</h5>
+                        <h5 className="text-[10px] font-black text-default-400 uppercase tracking-widest mb-6">Consejos de Cocina</h5>
                         <div className="space-y-4">
                             <div className="flex gap-4 p-3 rounded-2xl bg-primary/5 border border-primary/10">
                                 <span className="material-symbols-outlined text-primary font-black">lightbulb</span>

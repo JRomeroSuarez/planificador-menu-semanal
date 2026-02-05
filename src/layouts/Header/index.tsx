@@ -18,7 +18,7 @@ const Header = ({ onLoginClick, onRegisterClick }: HeaderProps) => {
                         <span className="material-symbols-outlined text-white">restaurant_menu</span>
                     </div>
                     <div className="hidden sm:block">
-                        <p className="font-black text-foreground text-lg tracking-tight">AI MENU</p>
+                        <p className="font-black text-foreground text-lg tracking-tight">SMART MENU</p>
                         <p className="text-[10px] font-bold text-default-400 -mt-1 uppercase tracking-widest">Planner Pro</p>
                     </div>
                 </NavLink>

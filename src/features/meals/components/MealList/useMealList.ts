@@ -1,6 +1,5 @@
 import { useState, useMemo } from 'react';
 import { Meal, MealType } from '@/types';
-import { isAiAvailable } from '@/features/meals/api/geminiService';
 import { useAuth } from '@/features/auth/context/AuthContext';
 
 interface UseMealListProps {
@@ -12,9 +11,7 @@ export const useMealList = ({ meals, onLoginClick }: UseMealListProps) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [activeFilters, setActiveFilters] = useState<MealType[]>([]);
     const [isAddModalOpen, setAddModalOpen] = useState(false);
-    const [isGeminiModalOpen, setGeminiModalOpen] = useState(false);
 
-    const aiEnabled = isAiAvailable();
     const { isAuthenticated } = useAuth();
 
     const handleFilterChange = (type: MealType) => {
@@ -26,14 +23,6 @@ export const useMealList = ({ meals, onLoginClick }: UseMealListProps) => {
     const handleAddClick = () => {
         if (isAuthenticated) {
             setAddModalOpen(true);
-        } else {
-            onLoginClick();
-        }
-    };
-
-    const handleGeminiClick = () => {
-        if (isAuthenticated) {
-            setGeminiModalOpen(true);
         } else {
             onLoginClick();
         }
@@ -54,11 +43,7 @@ export const useMealList = ({ meals, onLoginClick }: UseMealListProps) => {
         handleFilterChange,
         isAddModalOpen,
         setAddModalOpen,
-        isGeminiModalOpen,
-        setGeminiModalOpen,
         filteredMeals,
-        aiEnabled,
-        handleAddClick,
-        handleGeminiClick
+        handleAddClick
     };
 };

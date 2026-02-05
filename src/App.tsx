@@ -6,6 +6,7 @@ import RegisterModal from '@/features/auth/components/RegisterModal';
 import PlannerView from '@/features/planner/components/PlannerView';
 import RecipesCatalog from '@/features/meals/components/RecipesCatalog';
 import RecipeDetail from '@/features/meals/components/RecipeDetail';
+import AddRecipePage from '@/features/meals/components/AddRecipePage';
 import { useAppModals } from '@/hooks/useAppModals';
 
 const AppContent = () => {
@@ -25,6 +26,7 @@ const AppContent = () => {
             <Routes>
                 <Route path="/" element={<PlannerView onLoginClick={openLogin} />} />
                 <Route path="/recetas" element={<RecipesCatalog onLoginClick={openLogin} />} />
+                <Route path="/recetas/nueva" element={<AddRecipePage />} />
                 <Route path="/recetas/:id" element={<RecipeDetail />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>

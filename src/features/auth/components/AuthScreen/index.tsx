@@ -15,7 +15,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginClick, onRegisterClick }
                         <span className="material-symbols-outlined text-primary text-[40px]">restaurant_menu</span>
                     </div>
 
-                    <h2 className="text-3xl font-black text-foreground tracking-tight">AI MENU PLANNER</h2>
+                    <h2 className="text-3xl font-black text-foreground tracking-tight">MENU PLANNER</h2>
                     <p className="text-default-500 mt-4 text-sm leading-relaxed">
                         Organiza tus comidas de forma inteligente, genera listas de la compra automáticas y simplifica tu vida diaria.
                     </p>

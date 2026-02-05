@@ -1,4 +1,5 @@
 import { Input, Button, ScrollShadow, Divider, Card, CardBody, Badge } from "@heroui/react";
+import { useNavigate } from 'react-router-dom';
 import { useRecipesCatalog } from './useRecipesCatalog';
 import CatalogCard from './CatalogCard';
 import { MEAL_TYPES } from '@/utils/constants';
@@ -8,6 +9,7 @@ interface RecipesCatalogProps {
 }
 
 const RecipesCatalog = ({ onLoginClick }: RecipesCatalogProps) => {
+    const navigate = useNavigate();
     const {
         filteredMeals,
         isLoading,
@@ -29,7 +31,7 @@ const RecipesCatalog = ({ onLoginClick }: RecipesCatalogProps) => {
                             className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${activeFilter === 'Todos' ? 'bg-primary/10 text-primary font-bold' : 'text-default-500 hover:bg-default-50 font-medium'}`}
                             onClick={() => setActiveFilter('Todos')}
                         >
-                            <span className="material-symbols-outlined text-[20px]">auto_awesome</span>
+                            <span className="material-symbols-outlined text-[20px]">library_books</span>
                             <span className="text-sm">Todo el catálogo</span>
                         </button>
                         <button className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-default-500 hover:bg-default-50 transition-all font-medium">
@@ -51,8 +53,8 @@ const RecipesCatalog = ({ onLoginClick }: RecipesCatalogProps) => {
                                 key={type}
                                 onClick={() => setActiveFilter(type)}
                                 className={`px-3 py-1 text-[11px] rounded-lg font-bold transition-all border ${activeFilter === type
-                                        ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20'
-                                        : 'bg-white dark:bg-white/5 text-default-500 border-default-200 hover:border-primary/50'
+                                    ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20'
+                                    : 'bg-white dark:bg-white/5 text-default-500 border-default-200 hover:border-primary/50'
                                     }`}
                             >
                                 #{type}
@@ -76,6 +78,7 @@ const RecipesCatalog = ({ onLoginClick }: RecipesCatalogProps) => {
                         <p className="text-default-500 text-lg font-medium">Gestiona tu base de datos culinaria definitiva.</p>
                     </div>
                     <Button
+                        onPress={() => navigate('/recetas/nueva')}
                         color="primary"
                         size="lg"
                         className="font-bold shadow-xl shadow-primary/20 h-12"

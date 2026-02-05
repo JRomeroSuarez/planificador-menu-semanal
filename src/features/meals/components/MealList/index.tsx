@@ -3,7 +3,6 @@ import { Meal, MealType } from '@/types';
 import { MEAL_TYPES } from '@/utils/constants';
 import MealCard from '@/features/planner/components/MealCard';
 import AddMealModal from '../AddMealModal';
-import GeminiMealSuggest from '../GeminiMealSuggest';
 import { useMealList } from './useMealList';
 
 interface MealListProps {
@@ -21,12 +20,8 @@ const MealList = ({ meals, addMeal, onLoginClick, isLoading }: MealListProps) =>
         handleFilterChange,
         isAddModalOpen,
         setAddModalOpen,
-        isGeminiModalOpen,
-        setGeminiModalOpen,
         filteredMeals,
-        aiEnabled,
-        handleAddClick,
-        handleGeminiClick
+        handleAddClick
     } = useMealList({ meals, onLoginClick });
 
     return (
@@ -54,22 +49,13 @@ const MealList = ({ meals, addMeal, onLoginClick, isLoading }: MealListProps) =>
 
                 <div className="flex gap-2">
                     <Button
-                        onPress={handleGeminiClick}
-                        disabled={!aiEnabled}
-                        color="primary"
-                        variant="shadow"
-                        startContent={<span className="material-symbols-outlined text-lg">magic_button</span>}
-                        className="font-bold flex-1"
-                    >
-                        IA Sugiere
-                    </Button>
-                    <Button
                         onPress={handleAddClick}
+                        color="primary"
                         variant="flat"
-                        isIconOnly
-                        className="font-bold"
+                        className="flex-1 font-bold text-xs"
+                        startContent={<span className="material-symbols-outlined text-[18px]">add</span>}
                     >
-                        <span className="material-symbols-outlined">add</span>
+                        Nueva
                     </Button>
                 </div>
 
@@ -116,12 +102,6 @@ const MealList = ({ meals, addMeal, onLoginClick, isLoading }: MealListProps) =>
             <AddMealModal
                 isOpen={isAddModalOpen}
                 onClose={() => setAddModalOpen(false)}
-                onAddMeal={addMeal}
-            />
-
-            <GeminiMealSuggest
-                isOpen={isGeminiModalOpen}
-                onClose={() => setGeminiModalOpen(false)}
                 onAddMeal={addMeal}
             />
         </div>
