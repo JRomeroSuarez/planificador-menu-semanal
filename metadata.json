@@ -1,0 +1,5 @@
+{
+  "name": "Planificador de Menús Semanal",
+  "description": "Una aplicación para planificar tus comidas semanales, gestionar recetas y generar automáticamente una lista de la compra. Incluye sugerencias de recetas inteligentes con IA.",
+  "requestFramePermissions": []
+}
