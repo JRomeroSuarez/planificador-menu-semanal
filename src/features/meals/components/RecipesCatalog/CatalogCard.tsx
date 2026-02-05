@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { Card, CardBody, Button, Chip, Image } from "@heroui/react";
 import { Meal, MealType } from '@/types';
 import { MealTypeColors } from '@/utils/constants';
@@ -8,11 +9,16 @@ interface CatalogCardProps {
 }
 
 const CatalogCard = ({ meal, onAdd }: CatalogCardProps) => {
+    const navigate = useNavigate();
     // Generate a consistent random image seeded by meal name/id
     const imageUrl = `https://loremflickr.com/400/300/food,recipe?lock=${meal.id}`;
 
     return (
-        <Card className="group border-none bg-white dark:bg-slate-900 transition-all hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1">
+        <Card
+            isPressable
+            onPress={() => navigate(`/recetas/${meal.id}`)}
+            className="group border-none bg-white dark:bg-slate-900 transition-all hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1"
+        >
             <div className="relative aspect-[4/3] overflow-hidden">
                 <Image
                     alt={meal.name}

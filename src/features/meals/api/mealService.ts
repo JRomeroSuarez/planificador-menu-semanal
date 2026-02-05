@@ -68,3 +68,17 @@ export const addMeal = (username: string, mealData: Omit<Meal, 'id'>): Promise<M
         }, 300); // Simula retraso de red
     });
 };
+/**
+ * Simula la obtención de una comida por su ID.
+ * @param username El nombre de usuario.
+ * @param id El ID de la comida.
+ * @returns Una Promesa que se resuelve con la comida encontrada.
+ */
+export const getMealById = (username: string | null, id: number): Promise<Meal | undefined> => {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            const meals = username ? getMealsFromStorage(username) : initialMeals;
+            resolve(meals.find(m => m.id === id));
+        }, 300);
+    });
+};
