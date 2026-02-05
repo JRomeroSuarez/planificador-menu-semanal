@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input, Link } from "@heroui/react";
-import * as authService from '@/features/auth/api/authService';
+import { useRegisterModal } from './useRegisterModal';
 
 interface RegisterModalProps {
     isOpen: boolean;
@@ -9,40 +8,18 @@ interface RegisterModalProps {
 }
 
 const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps) => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [error, setError] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const [isSuccess, setIsSuccess] = useState(false);
-
-    useEffect(() => {
-        if (isOpen) {
-            setUsername('');
-            setPassword('');
-            setConfirmPassword('');
-            setError('');
-            setIsLoading(false);
-            setIsSuccess(false);
-        }
-    }, [isOpen]);
-
-    const handleSubmit = async () => {
-        if (password !== confirmPassword) {
-            setError('Las contraseñas no coinciden.');
-            return;
-        }
-        setError('');
-        setIsLoading(true);
-        try {
-            await authService.register(username, password);
-            setIsSuccess(true);
-        } catch (err) {
-            setError(err instanceof Error ? err.message : 'Ocurrió un error inesperado.');
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    const {
+        username,
+        setUsername,
+        password,
+        setPassword,
+        confirmPassword,
+        setConfirmPassword,
+        error,
+        isLoading,
+        isSuccess,
+        handleSubmit
+    } = useRegisterModal({ isOpen });
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} placement="center" backdrop="blur">

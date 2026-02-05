@@ -1,12 +1,10 @@
-import { useState, useMemo } from 'react';
 import { Input, Button, Chip, ScrollShadow } from "@heroui/react";
-import { Meal, MealType } from '@/types';
+import { Meal } from '@/types';
 import { MEAL_TYPES } from '@/utils/constants';
 import MealCard from '@/features/planner/components/MealCard';
-import AddMealModal from './AddMealModal';
-import GeminiMealSuggest from './GeminiMealSuggest';
-import { isAiAvailable } from '@/features/meals/api/geminiService';
-import { useAuth } from '@/features/auth/context/AuthContext';
+import AddMealModal from '../AddMealModal';
+import GeminiMealSuggest from '../GeminiMealSuggest';
+import { useMealList } from './useMealList';
 
 interface MealListProps {
     meals: Meal[];
@@ -16,42 +14,20 @@ interface MealListProps {
 }
 
 const MealList = ({ meals, addMeal, onLoginClick, isLoading }: MealListProps) => {
-    const [searchTerm, setSearchTerm] = useState('');
-    const [activeFilters, setActiveFilters] = useState<MealType[]>([]);
-    const [isAddModalOpen, setAddModalOpen] = useState(false);
-    const [isGeminiModalOpen, setGeminiModalOpen] = useState(false);
-    const aiEnabled = isAiAvailable();
-    const { isAuthenticated } = useAuth();
-
-    const handleFilterChange = (type: MealType) => {
-        setActiveFilters(prev =>
-            prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
-        );
-    };
-
-    const handleAddClick = () => {
-        if (isAuthenticated) {
-            setAddModalOpen(true);
-        } else {
-            onLoginClick();
-        }
-    };
-
-    const handleGeminiClick = () => {
-        if (isAuthenticated) {
-            setGeminiModalOpen(true);
-        } else {
-            onLoginClick();
-        }
-    };
-
-    const filteredMeals = useMemo(() => {
-        return meals.filter(meal => {
-            const matchesSearch = meal.name.toLowerCase().includes(searchTerm.toLowerCase());
-            const matchesFilter = activeFilters.length === 0 || activeFilters.every(filter => meal.type.includes(filter));
-            return matchesSearch && matchesFilter;
-        });
-    }, [meals, searchTerm, activeFilters]);
+    const {
+        searchTerm,
+        setSearchTerm,
+        activeFilters,
+        handleFilterChange,
+        isAddModalOpen,
+        setAddModalOpen,
+        isGeminiModalOpen,
+        setGeminiModalOpen,
+        filteredMeals,
+        aiEnabled,
+        handleAddClick,
+        handleGeminiClick
+    } = useMealList({ meals, onLoginClick });
 
     return (
         <div className="flex flex-col h-full bg-white dark:bg-background-dark">

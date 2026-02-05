@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input, Link } from "@heroui/react";
-import { useAuth } from '@/features/auth/context/AuthContext';
+import { useLoginModal } from './useLoginModal';
 
 interface LoginModalProps {
     isOpen: boolean;
@@ -9,33 +8,15 @@ interface LoginModalProps {
 }
 
 const LoginModal = ({ isOpen, onClose, onSwitchToRegister }: LoginModalProps) => {
-    const { login } = useAuth();
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-
-    useEffect(() => {
-        if (isOpen) {
-            setUsername('');
-            setPassword('');
-            setError('');
-            setIsLoading(false);
-        }
-    }, [isOpen]);
-
-    const handleSubmit = async () => {
-        setError('');
-        setIsLoading(true);
-        try {
-            await login(username, password);
-            onClose();
-        } catch (err) {
-            setError(err instanceof Error ? err.message : 'Ocurrió un error inesperado.');
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    const {
+        username,
+        setUsername,
+        password,
+        setPassword,
+        error,
+        isLoading,
+        handleSubmit
+    } = useLoginModal({ isOpen, onClose });
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} placement="center" backdrop="blur">
