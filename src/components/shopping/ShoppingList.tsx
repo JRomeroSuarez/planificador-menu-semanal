@@ -1,4 +1,5 @@
-import { useState, FormEvent } from 'react';
+import { useState } from 'react';
+import { Checkbox, Button, Input, ScrollShadow, Divider } from "@heroui/react";
 import { Ingredient } from '../../types';
 
 interface ConsolidatedIngredient {
@@ -14,27 +15,30 @@ interface ShoppingListProps {
 }
 
 const ShoppingListItem = ({ name, quantities, onRemove }: { name: string; quantities: string; onRemove: () => void; }) => {
-    const [checked, setChecked] = useState(false);
+    const [isSelected, setIsSelected] = useState(false);
 
     return (
-        <label className="flex items-center gap-2.5 cursor-pointer group py-1.5">
-            <input
-                className="rounded text-primary focus:ring-primary/20 bg-gray-100 dark:bg-white/5 border-none size-3.5 transition-all"
-                type="checkbox"
-                checked={checked}
-                onChange={() => setChecked(!checked)}
+        <div className="flex items-center gap-2 group py-1">
+            <Checkbox
+                isSelected={isSelected}
+                onValueChange={setIsSelected}
+                size="sm"
+                color="primary"
             />
-            <div className={`flex-1 transition-all ${checked ? 'opacity-40 line-through' : ''}`}>
-                <p className="text-xs text-gray-700 dark:text-gray-300 group-hover:text-primary transition-colors font-medium">{name}</p>
-                {quantities && <p className="text-[10px] text-gray-400">{quantities}</p>}
+            <div className={`flex-1 transition-all ${isSelected ? 'opacity-40 line-through' : ''}`}>
+                <p className="text-xs text-foreground font-medium">{name}</p>
+                {quantities && <p className="text-[10px] text-default-400">{quantities}</p>}
             </div>
-            <button
-                onClick={(e) => { e.preventDefault(); onRemove(); }}
-                className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-gray-400 hover:text-red-500"
+            <Button
+                isIconOnly
+                size="sm"
+                variant="light"
+                onPress={onRemove}
+                className="opacity-0 group-hover:opacity-100 min-w-8 w-8 h-8 text-default-400 hover:text-danger"
             >
                 <span className="material-symbols-outlined text-[16px]">delete</span>
-            </button>
-        </label>
+            </Button>
+        </div>
     );
 };
 
@@ -60,19 +64,19 @@ const ShoppingList = ({ derivedIngredients, manualIngredients, onAddIngredient, 
     };
 
     return (
-        <div className="flex flex-col h-full bg-white dark:bg-background-dark p-4 gap-5">
+        <div className="flex flex-col h-full bg-white dark:bg-background-dark p-4 gap-4">
             <div>
-                <h3 className="text-[#121118] dark:text-white text-base font-bold">Shopping List</h3>
-                <p className="text-[#686189] text-[10px] font-semibold uppercase tracking-tighter mt-1">Updated Just Now</p>
+                <h3 className="text-foreground text-base font-bold text-center">Shopping List</h3>
+                <p className="text-default-400 text-[10px] font-semibold uppercase tracking-widest mt-1 text-center">Weekly Inventory</p>
             </div>
 
-            <div className="flex-1 overflow-y-auto space-y-6 pr-1">
+            <ScrollShadow className="flex-1 space-y-6 pr-1">
                 {derivedIngredients.length > 0 && (
                     <div>
-                        <h4 className="text-[10px] font-black text-primary uppercase tracking-widest mb-2 flex items-center gap-2">
-                            <span className="material-symbols-outlined text-[14px]">set_meal</span>
-                            Del Menú
-                        </h4>
+                        <div className="flex items-center gap-2 mb-2">
+                            <span className="material-symbols-outlined text-primary text-[14px]">set_meal</span>
+                            <h4 className="text-[10px] font-black text-primary uppercase tracking-widest">Del Menú</h4>
+                        </div>
                         <div className="space-y-0.5">
                             {derivedIngredients.map(item => (
                                 <ShoppingListItem
@@ -88,10 +92,10 @@ const ShoppingList = ({ derivedIngredients, manualIngredients, onAddIngredient, 
 
                 {manualIngredients.length > 0 && (
                     <div>
-                        <h4 className="text-[10px] font-black text-primary uppercase tracking-widest mb-2 flex items-center gap-2">
-                            <span className="material-symbols-outlined text-[14px]">add_shopping_cart</span>
-                            Extras
-                        </h4>
+                        <div className="flex items-center gap-2 mb-2">
+                            <span className="material-symbols-outlined text-primary text-[14px]">add_shopping_cart</span>
+                            <h4 className="text-[10px] font-black text-primary uppercase tracking-widest">Extras</h4>
+                        </div>
                         <div className="space-y-0.5">
                             {manualIngredients.map((item, index) => (
                                 <ShoppingListItem
@@ -106,34 +110,38 @@ const ShoppingList = ({ derivedIngredients, manualIngredients, onAddIngredient, 
                 )}
 
                 {derivedIngredients.length === 0 && manualIngredients.length === 0 && (
-                    <div className="text-center py-8 text-gray-400">
-                        <span className="material-symbols-outlined text-[32px] mb-2 block">shopping_basket</span>
-                        <p className="text-xs">Lista vacía</p>
+                    <div className="text-center py-12 text-default-400">
+                        <span className="material-symbols-outlined text-[40px] mb-3 block opacity-20">shopping_basket</span>
+                        <p className="text-xs">Your list is empty</p>
                     </div>
                 )}
-            </div>
+            </ScrollShadow>
 
-            <div className="mt-auto space-y-4 pt-4 border-t border-gray-100 dark:border-white/10">
+            <div className="mt-auto space-y-4 pt-4">
+                <Divider className="mb-4" />
                 <form onSubmit={handleAddItem} className="flex gap-2">
-                    <input
-                        type="text"
+                    <Input
+                        size="sm"
                         value={newItem}
-                        onChange={e => setNewItem(e.target.value)}
-                        placeholder="Add item (e.g. Bread)"
-                        className="flex-grow min-w-0 px-3 py-1.5 text-xs bg-[#f1f0f4] dark:bg-white/5 border-none rounded-lg focus:ring-1 focus:ring-primary text-gray-800 dark:text-white placeholder:text-gray-400"
+                        onValueChange={setNewItem}
+                        placeholder="Add extra item..."
+                        endContent={
+                            <Button isIconOnly size="sm" variant="flat" color="primary" type="submit">
+                                <span className="material-symbols-outlined text-[18px]">add</span>
+                            </Button>
+                        }
                     />
-                    <button type="submit" className="p-1.5 bg-primary text-white rounded-lg hover:opacity-90 transition-opacity">
-                        <span className="material-symbols-outlined text-[20px]">add</span>
-                    </button>
                 </form>
 
-                <button
-                    onClick={handleExport}
-                    className="w-full flex items-center justify-center gap-2 rounded-lg h-10 px-4 bg-primary text-white text-xs font-bold shadow-md shadow-primary/10 transition-transform active:scale-95"
+                <Button
+                    color="primary"
+                    variant="solid"
+                    onPress={handleExport}
+                    className="w-full font-bold shadow-lg shadow-primary/20"
+                    startContent={<span className="material-symbols-outlined text-[18px]">send_to_mobile</span>}
                 >
-                    <span className="material-symbols-outlined text-[18px]">send_to_mobile</span>
-                    <span>Export List</span>
-                </button>
+                    Export List
+                </Button>
             </div>
         </div>
     );

@@ -1,4 +1,5 @@
 import { useDraggable } from '@dnd-kit/core';
+import { Card, CardBody, Chip } from "@heroui/react";
 import { Meal, MealType } from '../../types';
 import { MealTypeColors } from '../../config/constants';
 
@@ -17,36 +18,41 @@ const MealCard = ({ meal, isOverlay = false }: MealCardProps) => {
     } : undefined;
 
     return (
-        <div
-            ref={setNodeRef}
+        <Card
+            ref={(node: HTMLElement | null) => setNodeRef(node as any)}
             style={style}
             {...listeners}
             {...attributes}
+            isPressable
             className={`
-                p-3 bg-white dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-xl shadow-sm 
+                border-none bg-white dark:bg-white/5 shadow-sm
                 transition-all duration-200 group
-                ${isDragging ? 'cursor-grabbing border-primary scale-105 shadow-xl z-50' : 'cursor-grab hover:border-primary'}
+                ${isDragging ? 'cursor-grabbing ring-2 ring-primary scale-105 shadow-xl z-50' : 'cursor-grab'}
                 ${isOverlay ? 'cursor-grabbing shadow-2xl scale-105 z-50 ring-2 ring-primary/20' : ''}
             `}
         >
-            <div className="flex justify-between items-start mb-2">
-                <div className="flex flex-wrap gap-1">
-                    {meal.type.map(t => {
-                        const tagColors = MealTypeColors[t];
-                        return (
-                            <span
-                                key={t}
-                                className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider ${tagColors.bg} ${tagColors.text}`}
-                            >
-                                {t}
-                            </span>
-                        );
-                    })}
+            <CardBody className="p-3">
+                <div className="flex justify-between items-start mb-2">
+                    <div className="flex flex-wrap gap-1">
+                        {meal.type.map(t => {
+                            const tagColors = MealTypeColors[t];
+                            return (
+                                <Chip
+                                    key={t}
+                                    size="sm"
+                                    className={`h-4 text-[8px] font-bold uppercase tracking-wider ${tagColors.bg} ${tagColors.text}`}
+                                    variant="flat"
+                                >
+                                    {t}
+                                </Chip>
+                            );
+                        })}
+                    </div>
+                    <span className="material-symbols-outlined text-default-400 group-hover:text-primary text-[16px] transition-colors">drag_indicator</span>
                 </div>
-                <span className="material-symbols-outlined text-gray-400 group-hover:text-primary text-[16px] transition-colors">drag_indicator</span>
-            </div>
-            <h4 className="text-xs font-semibold text-[#121118] dark:text-white leading-tight">{meal.name}</h4>
-        </div>
+                <h4 className="text-xs font-semibold text-foreground leading-tight">{meal.name}</h4>
+            </CardBody>
+        </Card>
     );
 };
 

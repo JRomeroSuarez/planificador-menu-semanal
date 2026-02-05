@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { suggestMeal } from '../../services/geminiService';
 import { Meal, MealType } from '../../types';
 import { MealTypeColors, MEAL_TYPES } from '../../config/constants';
-import Modal from '../common/Modal';
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Textarea, Chip, Skeleton, Card, CardBody, Divider } from "@heroui/react";
 
 interface GeminiMealSuggestProps {
     isOpen: boolean;
@@ -52,87 +52,111 @@ const GeminiMealSuggest = ({ isOpen, onClose, onAddMeal }: GeminiMealSuggestProp
         onClose();
     };
 
-    const renderContent = () => {
-        if (isLoading) {
-            return (
-                <div className="text-center p-8">
-                    <p className="text-lg font-semibold text-gray-700">Buscando una receta deliciosa...</p>
-                    <p className="text-gray-500 mt-2">Esto puede tardar unos segundos.</p>
-                </div>
-            );
-        }
-
-        if (suggestion) {
-            return (
-                <div className="space-y-4">
-                    <h4 className="text-xl font-bold text-gray-900">{suggestion.name}</h4>
-                    <div className="flex flex-wrap gap-2">
-                        {suggestion.type.map(t => {
-                            const colors = MealTypeColors[t as MealType] || MealTypeColors.Otro;
-                            return (
-                                <span key={t} className={`px-2 py-1 text-xs font-medium rounded-full ${colors.bg} ${colors.text}`}>
-                                    {t.toUpperCase()}
-                                </span>
-                            );
-                        })}
-                    </div>
-                    <div>
-                        <h5 className="font-semibold mb-2 text-gray-700">Ingredientes:</h5>
-                        <ul className="list-disc list-inside bg-gray-50 p-3 rounded-md space-y-1">
-                            {suggestion.ingredients.map((item, index) => (
-                                <li key={index} className="text-gray-800">
-                                    <span className="font-medium">{item.name}:</span> {item.quantity}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                </div>
-            );
-        }
-
-        return (
-            <div className="space-y-4">
-                <p className="text-sm text-gray-600">Introduce algunos ingredientes que tengas y la IA te sugerirá una receta.</p>
-                <textarea
-                    value={ingredients}
-                    onChange={(e) => setIngredients(e.target.value)}
-                    rows={3}
-                    placeholder="Ej: pollo, arroz, pimiento..."
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 bg-white text-slate-800 placeholder:text-slate-400"
-                />
-                {error && <p className="text-sm text-red-600 bg-red-100 p-3 rounded-md">{error}</p>}
-            </div>
-        );
-    };
-
-    const footer = suggestion ? (
-        <>
-            <button onClick={handleSuggest} disabled={isLoading} className="px-4 py-2 bg-gray-100 dark:bg-white/5 text-gray-800 dark:text-gray-300 rounded-xl hover:bg-gray-200 dark:hover:bg-white/10 disabled:opacity-50 transition-colors text-sm font-semibold">
-                Probar de nuevo
-            </button>
-            <button onClick={handleAddMeal} className="px-4 py-2 bg-primary text-white rounded-xl hover:opacity-90 transition-opacity text-sm font-semibold shadow-md shadow-primary/20">
-                Añadir a mi lista
-            </button>
-        </>
-    ) : (
-        <>
-            <button onClick={handleClose} className="px-4 py-2 bg-gray-100 dark:bg-white/5 text-gray-800 dark:text-gray-300 rounded-xl hover:bg-gray-200 dark:hover:bg-white/10 transition-colors text-sm font-semibold">
-                Cancelar
-            </button>
-            <button onClick={handleSuggest} disabled={isLoading} className="px-4 py-2 bg-primary text-white rounded-xl hover:opacity-90 disabled:opacity-50 transition-colors text-sm font-semibold shadow-md shadow-primary/20">
-                {isLoading ? 'Buscando...' : 'Obtener Sugerencia'}
-            </button>
-        </>
-    );
-
     return (
-        <Modal
-            title="Sugerir Comida con IA"
-            isOpen={isOpen}
-            onClose={handleClose}
-            footer={footer}
-        >
-            {renderContent()}
+        <Modal isOpen={isOpen} onClose={handleClose} size="lg" backdrop="blur">
+            <ModalContent>
+                {(onClose) => (
+                    <>
+                        <ModalHeader className="flex flex-col gap-1">AI Recipe Suggestion</ModalHeader>
+                        <ModalBody>
+                            {isLoading ? (
+                                <div className="space-y-4 py-4">
+                                    <Skeleton className="rounded-lg">
+                                        <div className="h-8 w-3/4 rounded-lg bg-default-200"></div>
+                                    </Skeleton>
+                                    <div className="flex gap-2">
+                                        <Skeleton className="rounded-full w-16 h-6" />
+                                        <Skeleton className="rounded-full w-16 h-6" />
+                                    </div>
+                                    <Card className="border-none shadow-none bg-default-50">
+                                        <CardBody className="space-y-3">
+                                            <Skeleton className="h-4 w-full rounded-md" />
+                                            <Skeleton className="h-4 w-full rounded-md" />
+                                            <Skeleton className="h-4 w-2/3 rounded-md" />
+                                        </CardBody>
+                                    </Card>
+                                </div>
+                            ) : suggestion ? (
+                                <div className="space-y-4 py-2">
+                                    <h4 className="text-xl font-bold">{suggestion.name}</h4>
+                                    <div className="flex flex-wrap gap-2">
+                                        {suggestion.type.map(t => {
+                                            const colors = MealTypeColors[t as MealType] || MealTypeColors.Otro;
+                                            return (
+                                                <Chip key={t} size="sm" variant="flat" className={`${colors.bg} ${colors.text} font-bold h-5 px-1`}>
+                                                    {t.toUpperCase()}
+                                                </Chip>
+                                            );
+                                        })}
+                                    </div>
+
+                                    <div>
+                                        <h5 className="font-semibold mb-3 text-default-600 flex items-center gap-2">
+                                            <span className="material-symbols-outlined text-lg">restaurant_menu</span>
+                                            Ingredients
+                                        </h5>
+                                        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 bg-default-50 p-4 rounded-2xl border border-divider">
+                                            {suggestion.ingredients.map((item, index) => (
+                                                <li key={index} className="text-sm flex items-center justify-between">
+                                                    <span className="font-medium">{item.name}</span>
+                                                    <span className="text-default-400 text-xs px-2 py-0.5 bg-default-100 rounded-md">{item.quantity}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="space-y-4 py-2">
+                                    <p className="text-sm text-default-500">
+                                        List some ingredients you have on hand and our AI will suggest a perfect recipe for you.
+                                    </p>
+                                    <Textarea
+                                        label="What's in your fridge?"
+                                        placeholder="e.g. chicken, rice, bell peppers..."
+                                        value={ingredients}
+                                        onValueChange={setIngredients}
+                                        variant="bordered"
+                                        minRows={3}
+                                    />
+                                    {error && (
+                                        <Card className="bg-danger-50 border-none shadow-none">
+                                            <CardBody className="py-2 text-danger text-xs font-medium uppercase tracking-tight">
+                                                {error}
+                                            </CardBody>
+                                        </Card>
+                                    )}
+                                </div>
+                            )}
+                        </ModalBody>
+                        <ModalFooter>
+                            {suggestion ? (
+                                <>
+                                    <Button variant="flat" onPress={handleSuggest} isLoading={isLoading}>
+                                        Try another one
+                                    </Button>
+                                    <Button color="primary" onPress={handleAddMeal} className="font-bold">
+                                        Add to Library
+                                    </Button>
+                                </>
+                            ) : (
+                                <>
+                                    <Button variant="light" onPress={handleClose}>
+                                        Cancel
+                                    </Button>
+                                    <Button
+                                        color="primary"
+                                        onPress={handleSuggest}
+                                        isLoading={isLoading}
+                                        className="font-bold shadow-lg shadow-primary/20"
+                                    >
+                                        Get Suggestion
+                                    </Button>
+                                </>
+                            )}
+                        </ModalFooter>
+                    </>
+                )}
+            </ModalContent>
         </Modal>
     );
 };

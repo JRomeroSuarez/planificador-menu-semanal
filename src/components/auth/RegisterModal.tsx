@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import Modal from '../common/Modal';
+import { useState, useEffect } from 'react';
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input, Link } from "@heroui/react";
 import * as authService from '../../services/authService';
 
 interface RegisterModalProps {
@@ -8,7 +8,7 @@ interface RegisterModalProps {
     onSwitchToLogin: () => void;
 }
 
-const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose, onSwitchToLogin }) => {
+const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -27,8 +27,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose, onSwitch
         }
     }, [isOpen]);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleSubmit = async () => {
         if (password !== confirmPassword) {
             setError('Las contraseñas no coinciden.');
             return;
@@ -45,53 +44,87 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose, onSwitch
         }
     };
 
-    const footer = isSuccess ? (
-        <button onClick={onSwitchToLogin} className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors">
-            Ir a Iniciar Sesión
-        </button>
-    ) : (
-        <>
-            <button onClick={onClose} className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors">
-                Cancelar
-            </button>
-            <button type="submit" form="register-form" disabled={isLoading} className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors disabled:bg-indigo-300">
-                {isLoading ? 'Registrando...' : 'Crear Cuenta'}
-            </button>
-        </>
-    );
-
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title="Crear una Cuenta" footer={footer}>
-            {isSuccess ? (
-                <div className="text-center p-4">
-                    <h3 className="text-lg font-medium text-green-800">¡Registro completado!</h3>
-                    <p className="mt-2 text-gray-600">Tu cuenta ha sido creada con éxito. Ahora puedes iniciar sesión.</p>
-                </div>
-            ) : (
-                <form onSubmit={handleSubmit} id="register-form" className="space-y-4">
-                    {error && <p className="text-sm text-red-600 bg-red-100 p-3 rounded-md">{error}</p>}
-                    <div>
-                        <label htmlFor="reg-username"className="block text-sm font-medium text-gray-700 mb-1">Usuario</label>
-                        <input id="reg-username" type="text" value={username} onChange={(e) => setUsername(e.target.value)} required className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 bg-white text-slate-800"/>
-                    </div>
-                    <div>
-                        <label htmlFor="reg-password"className="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
-                        <input id="reg-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 bg-white text-slate-800"/>
-                    </div>
-                    <div>
-                        <label htmlFor="reg-confirm-password"className="block text-sm font-medium text-gray-700 mb-1">Confirmar Contraseña</label>
-                        <input id="reg-confirm-password" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 bg-white text-slate-800"/>
-                    </div>
-                     <div className="text-sm text-center pt-2">
-                        <p className="text-gray-600">
-                            ¿Ya tienes una cuenta?{' '}
-                            <button type="button" onClick={onSwitchToLogin} className="font-medium text-indigo-600 hover:text-indigo-500">
-                                Inicia sesión
-                            </button>
-                        </p>
-                    </div>
-                </form>
-            )}
+        <Modal isOpen={isOpen} onClose={onClose} placement="center" backdrop="blur">
+            <ModalContent>
+                {(onClose) => (
+                    <>
+                        <ModalHeader className="flex flex-col gap-1">
+                            {isSuccess ? '¡Registro completado!' : 'Crear una Cuenta'}
+                        </ModalHeader>
+                        <ModalBody>
+                            {isSuccess ? (
+                                <div className="text-center py-4 space-y-4">
+                                    <div className="w-16 h-16 bg-success-50 text-success rounded-full flex items-center justify-center mx-auto">
+                                        <span className="material-symbols-outlined text-3xl">check_circle</span>
+                                    </div>
+                                    <p className="text-default-600">
+                                        Tu cuenta ha sido creada con éxito. Ahora ya puedes iniciar sesión y empezar a planificar.
+                                    </p>
+                                </div>
+                            ) : (
+                                <div className="space-y-4">
+                                    {error && (
+                                        <div className="p-3 text-xs bg-danger-50 text-danger rounded-xl font-bold uppercase tracking-tight">
+                                            {error}
+                                        </div>
+                                    )}
+                                    <Input
+                                        label="Usuario"
+                                        placeholder="Elige un nombre de usuario"
+                                        variant="bordered"
+                                        value={username}
+                                        onValueChange={setUsername}
+                                    />
+                                    <Input
+                                        label="Contraseña"
+                                        placeholder="Crea una contraseña"
+                                        type="password"
+                                        variant="bordered"
+                                        value={password}
+                                        onValueChange={setPassword}
+                                    />
+                                    <Input
+                                        label="Confirmar Contraseña"
+                                        placeholder="Repite tu contraseña"
+                                        type="password"
+                                        variant="bordered"
+                                        value={confirmPassword}
+                                        onValueChange={setConfirmPassword}
+                                    />
+                                    <div className="text-center text-sm">
+                                        <span className="text-default-500">¿Ya tienes una cuenta? </span>
+                                        <Link className="cursor-pointer font-bold" size="sm" onPress={onSwitchToLogin}>
+                                            Inicia sesión
+                                        </Link>
+                                    </div>
+                                </div>
+                            )}
+                        </ModalBody>
+                        <ModalFooter>
+                            {isSuccess ? (
+                                <Button color="primary" onPress={onSwitchToLogin} className="w-full font-bold">
+                                    Ir a Iniciar Sesión
+                                </Button>
+                            ) : (
+                                <>
+                                    <Button variant="flat" color="danger" onPress={onClose}>
+                                        Cancelar
+                                    </Button>
+                                    <Button
+                                        color="primary"
+                                        onPress={handleSubmit}
+                                        isLoading={isLoading}
+                                        className="font-bold"
+                                    >
+                                        Crear Cuenta
+                                    </Button>
+                                </>
+                            )}
+                        </ModalFooter>
+                    </>
+                )}
+            </ModalContent>
         </Modal>
     );
 };
