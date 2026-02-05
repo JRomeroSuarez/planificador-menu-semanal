@@ -1,5 +1,5 @@
 import { GoogleGenAI, Type } from "@google/genai";
-import { Meal, MealType } from "../types";
+import { Meal, MealType } from '@/types';
 
 let ai: GoogleGenAI | null = null;
 const API_KEY = process.env.API_KEY;

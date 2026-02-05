@@ -3,9 +3,6 @@ import ReactDOM from 'react-dom/client';
 import { HeroUIProvider } from "@heroui/react";
 import App from './App';
 import './index.css';
-import './context/AuthContext';
-import './services/authService';
-import './services/mealService';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {

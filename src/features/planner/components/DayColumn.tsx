@@ -1,7 +1,7 @@
 import { useDroppable } from '@dnd-kit/core';
 import { Card, CardBody, Button, Chip, Divider } from "@heroui/react";
-import { Meal } from '../../types';
-import { MealTypeColors } from '../../config/constants';
+import { Meal } from '@/types';
+import { MealTypeColors } from '@/utils/constants';
 
 interface MealSlotProps {
     day: string;

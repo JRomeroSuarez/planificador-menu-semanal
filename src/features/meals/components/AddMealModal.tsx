@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input, Select, SelectItem, Textarea } from "@heroui/react";
-import { Meal, MealType, Ingredient } from '../../types';
-import { MEAL_TYPES } from '../../config/constants';
+import { Meal, MealType, Ingredient } from '@/types';
+import { MEAL_TYPES } from '@/utils/constants';
 
 interface AddMealModalProps {
     isOpen: boolean;

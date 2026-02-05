@@ -1,4 +1,4 @@
-import { Meal, MealType } from '../types';
+import { Meal, MealType } from '@/types';
 
 const initialMeals: Meal[] = [
     { id: 1, name: 'Lentejas con chorizo', type: [MealType.Legumbre], ingredients: [{ name: 'lentejas pardinas', quantity: '400g' }, { name: 'chorizo', quantity: '1 ud' }, { name: 'zanoria', quantity: '2 uds' }, { name: 'patata', quantity: '2 uds' }] },

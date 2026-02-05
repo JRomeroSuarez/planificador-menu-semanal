@@ -1,6 +1,6 @@
 import { createContext, useState, useContext, ReactNode } from 'react';
-import { User } from '../types';
-import * as authService from '../services/authService';
+import { User } from '@/types';
+import * as authService from '@/features/auth/api/authService';
 
 interface AuthContextType {
     isAuthenticated: boolean;

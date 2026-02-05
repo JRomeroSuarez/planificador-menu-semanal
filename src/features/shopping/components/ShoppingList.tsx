@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Checkbox, Button, Input, ScrollShadow, Divider } from "@heroui/react";
-import { Ingredient } from '../../types';
+import { Ingredient } from '@/types';
 
 interface ConsolidatedIngredient {
     name: string;
@@ -122,6 +122,7 @@ const ShoppingList = ({ derivedIngredients, manualIngredients, onAddIngredient, 
                 <form onSubmit={handleAddItem} className="flex gap-2">
                     <Input
                         size="sm"
+                        variant="bordered"
                         value={newItem}
                         onValueChange={setNewItem}
                         placeholder="Add extra item..."

@@ -1,18 +1,18 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { DndContext, DragEndEvent, DragStartEvent, DragOverlay } from '@dnd-kit/core';
-import { Meal, WeeklyPlan, Ingredient } from './types';
-import { DAYS_OF_WEEK } from './config/constants';
-import MealList from './components/meals/MealList';
-import DayColumn from './components/planner/DayColumn';
-import ShoppingList from './components/shopping/ShoppingList';
-import MealCard from './components/planner/MealCard';
-import { AuthProvider, useAuth } from './context/AuthContext';
-import Header from './components/layout/Header';
-import LoginModal from './components/auth/LoginModal';
-import RegisterModal from './components/auth/RegisterModal';
-import * as mealService from './services/mealService';
+import { Meal, WeeklyPlan, Ingredient } from '@/types';
+import { DAYS_OF_WEEK } from '@/utils/constants';
+import MealList from '@/features/meals/components/MealList';
+import DayColumn from '@/features/planner/components/DayColumn';
+import ShoppingList from '@/features/shopping/components/ShoppingList';
+import MealCard from '@/features/planner/components/MealCard';
+import { AuthProvider, useAuth } from '@/features/auth/context/AuthContext';
+import Header from '@/layouts/Header';
+import LoginModal from '@/features/auth/components/LoginModal';
+import RegisterModal from '@/features/auth/components/RegisterModal';
+import * as mealService from '@/features/meals/api/mealService';
 
-const initialWeeklyPlan: WeeklyPlan = DAYS_OF_WEEK.reduce((acc, day) => ({ ...acc, [day]: { lunch: [], dinner: [] } }), {});
+const initialWeeklyPlan: WeeklyPlan = DAYS_OF_WEEK.reduce((acc: WeeklyPlan, day: string) => ({ ...acc, [day]: { lunch: [], dinner: [] } }), {});
 
 interface PlannerViewProps {
     onLoginClick: () => void;
@@ -30,10 +30,10 @@ const PlannerView = ({ onLoginClick }: PlannerViewProps) => {
     useEffect(() => {
         setIsLoadingMeals(true);
         mealService.getMeals(user?.username || null)
-            .then(userMeals => {
+            .then((userMeals: Meal[]) => {
                 setMeals(userMeals);
             })
-            .catch(error => console.error("Failed to load meals:", error))
+            .catch((error: Error) => console.error("Failed to load meals:", error))
             .finally(() => setIsLoadingMeals(false));
     }, [user]);
 
@@ -178,7 +178,7 @@ const PlannerView = ({ onLoginClick }: PlannerViewProps) => {
                     </div>
 
                     <div id="printable-area" className="printable-main-content grid grid-cols-1 md:grid-cols-4 lg:grid-cols-7 gap-6 flex-1 min-h-[700px]">
-                        {DAYS_OF_WEEK.map(day => (
+                        {DAYS_OF_WEEK.map((day: string) => (
                             <div key={day} className="flex flex-col gap-6">
                                 <DayColumn day={day} meals={weeklyPlan[day]} onRemoveMeal={removeMealFromDay} />
                             </div>

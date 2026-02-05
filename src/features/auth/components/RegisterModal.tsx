@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input, Link } from "@heroui/react";
-import * as authService from '../../services/authService';
+import * as authService from '@/features/auth/api/authService';
 
 interface RegisterModalProps {
     isOpen: boolean;

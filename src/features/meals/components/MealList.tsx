@@ -1,12 +1,12 @@
 import { useState, useMemo } from 'react';
 import { Input, Button, Chip, ScrollShadow } from "@heroui/react";
-import { Meal, MealType } from '../../types';
-import { MEAL_TYPES } from '../../config/constants';
-import MealCard from '../planner/MealCard';
+import { Meal, MealType } from '@/types';
+import { MEAL_TYPES } from '@/utils/constants';
+import MealCard from '@/features/planner/components/MealCard';
 import AddMealModal from './AddMealModal';
 import GeminiMealSuggest from './GeminiMealSuggest';
-import { isAiAvailable } from '../../services/geminiService';
-import { useAuth } from '../../context/AuthContext';
+import { isAiAvailable } from '@/features/meals/api/geminiService';
+import { useAuth } from '@/features/auth/context/AuthContext';
 
 interface MealListProps {
     meals: Meal[];
@@ -61,7 +61,11 @@ const MealList = ({ meals, addMeal, onLoginClick, isLoading }: MealListProps) =>
                 <Input
                     isClearable
                     radius="lg"
+                    variant="bordered"
                     placeholder="Search recipes..."
+                    classNames={{
+                        inputWrapper: "border-1",
+                    }}
                     startContent={
                         <span className="material-symbols-outlined text-default-400 text-lg">search</span>
                     }

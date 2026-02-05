@@ -1,4 +1,4 @@
-import { User } from '../types';
+import { User } from '@/types';
 
 /**
  * Simula una llamada de login a un backend.
@@ -25,7 +25,7 @@ export const login = (username: string, password: string): Promise<User> => {
  * @returns Una Promesa que siempre se resuelve para simular un registro exitoso.
  */
 export const register = (username: string, password: string): Promise<User> => {
-     return new Promise((resolve) => {
+    return new Promise((resolve) => {
         setTimeout(() => {
             // En una aplicación real, aquí se crearía el usuario en la base de datos.
             // Para la simulación, simplemente devolvemos el usuario como si se hubiera creado.

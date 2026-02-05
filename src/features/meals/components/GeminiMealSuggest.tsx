@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { suggestMeal } from '../../services/geminiService';
-import { Meal, MealType } from '../../types';
-import { MealTypeColors, MEAL_TYPES } from '../../config/constants';
+import { suggestMeal } from '@/features/meals/api/geminiService';
+import { Meal, MealType } from '@/types';
+import { MealTypeColors, MEAL_TYPES } from '@/utils/constants';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Textarea, Chip, Skeleton, Card, CardBody, Divider } from "@heroui/react";
 
 interface GeminiMealSuggestProps {
@@ -26,10 +26,14 @@ const GeminiMealSuggest = ({ isOpen, onClose, onAddMeal }: GeminiMealSuggestProp
         setSuggestion(null);
         try {
             const result = await suggestMeal(ingredients);
-            const mealTypesAreValid = result.type.every(t => MEAL_TYPES.includes(t as MealType));
+            const mealTypesAreValid = result.type.every((t: string) => MEAL_TYPES.includes(t as MealType));
             const finalMealTypes = mealTypesAreValid && result.type.length > 0 ? result.type as MealType[] : [MealType.Otro];
 
-            setSuggestion({ ...result, type: finalMealTypes });
+            setSuggestion({
+                name: result.name,
+                type: finalMealTypes,
+                ingredients: result.ingredients
+            });
         } catch (err) {
             setError(err instanceof Error ? err.message : 'No se pudo obtener una sugerencia. Inténtalo de nuevo.');
             console.error(err);

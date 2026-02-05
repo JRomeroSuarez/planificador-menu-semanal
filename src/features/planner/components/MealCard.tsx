@@ -1,7 +1,7 @@
 import { useDraggable } from '@dnd-kit/core';
 import { Card, CardBody, Chip } from "@heroui/react";
-import { Meal, MealType } from '../../types';
-import { MealTypeColors } from '../../config/constants';
+import { Meal, MealType } from '@/types';
+import { MealTypeColors } from '@/utils/constants';
 
 interface MealCardProps {
     meal: Meal;
