@@ -1,5 +1,5 @@
-import { Input, Button, Chip, ScrollShadow } from "@heroui/react";
-import { Meal } from '@/types';
+import { Input, Button, ScrollShadow, Tabs, Tab, CircularProgress } from "@heroui/react";
+import { Meal, MealType } from '@/types';
 import { MEAL_TYPES } from '@/utils/constants';
 import MealCard from '@/features/planner/components/MealCard';
 import AddMealModal from '../AddMealModal';
@@ -31,14 +31,17 @@ const MealList = ({ meals, addMeal, onLoginClick, isLoading }: MealListProps) =>
 
     return (
         <div className="flex flex-col h-full bg-white dark:bg-background-dark">
-            <div className="p-4 flex flex-col gap-4 sticky top-0 bg-white dark:bg-background-dark z-10 border-b border-divider">
-                <h1 className="text-foreground text-base font-bold">Recipe Library</h1>
+            <div className="p-6 flex flex-col gap-6 sticky top-0 bg-white dark:bg-background-dark z-10 border-b border-divider shadow-sm">
+                <div className="flex items-center gap-2">
+                    <span className="material-symbols-outlined text-primary">book</span>
+                    <h1 className="text-foreground text-lg font-black tracking-tight">Recetario</h1>
+                </div>
 
                 <Input
                     isClearable
-                    radius="lg"
+                    radius="full"
                     variant="bordered"
-                    placeholder="Search recipes..."
+                    placeholder="Buscar recetas..."
                     classNames={{
                         inputWrapper: "border-1",
                     }}
@@ -49,54 +52,63 @@ const MealList = ({ meals, addMeal, onLoginClick, isLoading }: MealListProps) =>
                     onValueChange={setSearchTerm}
                 />
 
-                <div className="flex flex-col gap-2">
+                <div className="flex gap-2">
                     <Button
                         onPress={handleGeminiClick}
                         disabled={!aiEnabled}
                         color="primary"
+                        variant="shadow"
                         startContent={<span className="material-symbols-outlined text-lg">magic_button</span>}
-                        className="font-bold"
+                        className="font-bold flex-1"
                     >
-                        AI Suggest
+                        IA Sugiere
                     </Button>
                     <Button
                         onPress={handleAddClick}
                         variant="flat"
-                        startContent={<span className="material-symbols-outlined text-lg">add</span>}
-                        className="font-bold underline-offset-4"
+                        isIconOnly
+                        className="font-bold"
                     >
-                        Add Dish
+                        <span className="material-symbols-outlined">add</span>
                     </Button>
                 </div>
 
-                <div className="flex flex-wrap gap-1 mt-1">
-                    {MEAL_TYPES.map(type => (
-                        <Chip
-                            key={type}
-                            variant={activeFilters.includes(type) ? "solid" : "flat"}
-                            color={activeFilters.includes(type) ? "primary" : "default"}
-                            className="cursor-pointer text-[10px] uppercase font-bold"
-                            onClick={() => handleFilterChange(type)}
-                            size="sm"
-                        >
-                            {type}
-                        </Chip>
-                    ))}
+                <div className="flex flex-col gap-2">
+                    <Tabs
+                        aria-label="Filtros de comida"
+                        variant="underlined"
+                        color="primary"
+                        selectedKey={activeFilters[0] || "Todos"}
+                        onSelectionChange={(key) => handleFilterChange(key === "Todos" ? ("" as any) : (key as MealType))}
+                        classNames={{
+                            tabList: "gap-4 w-full relative rounded-none border-b border-divider p-0",
+                            cursor: "w-full bg-primary",
+                            tab: "max-w-fit px-0 h-8",
+                            tabContent: "group-data-[selected=true]:text-primary font-bold text-[11px] uppercase tracking-widest"
+                        }}
+                    >
+                        <Tab key="Todos" title="Todos" />
+                        {MEAL_TYPES.map(type => (
+                            <Tab key={type} title={type} />
+                        ))}
+                    </Tabs>
                 </div>
             </div>
 
             <ScrollShadow className="flex-1 px-4 py-4 flex flex-col gap-3">
                 {isLoading ? (
-                    <div className="text-center py-8 text-default-500">
-                        <p className="text-xs">Cargando comidas...</p>
+                    <div className="flex flex-col items-center justify-center h-full gap-4 text-default-500 py-12">
+                        <CircularProgress size="lg" aria-label="Loading..." />
+                        <p className="text-xs font-bold uppercase tracking-widest opacity-50">Cargando Recetario</p>
                     </div>
                 ) : filteredMeals.length > 0 ? (
                     filteredMeals.map(meal => (
                         <MealCard key={meal.id} meal={meal} />
                     ))
                 ) : (
-                    <div className="text-center py-8 text-default-500">
-                        <p className="text-xs">No recipes found.</p>
+                    <div className="flex flex-col items-center justify-center py-12 text-default-400">
+                        <span className="material-symbols-outlined text-[48px] mb-4 opacity-10">lunch_dining</span>
+                        <p className="text-xs font-bold uppercase tracking-widest">No hay recetas</p>
                     </div>
                 )}
             </ScrollShadow>

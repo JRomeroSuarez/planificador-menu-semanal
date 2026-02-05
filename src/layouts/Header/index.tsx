@@ -51,12 +51,33 @@ const Header = ({ onLoginClick, onRegisterClick }: HeaderProps) => {
                         </DropdownTrigger>
                         <DropdownMenu aria-label="Profile Actions" variant="flat">
                             <DropdownItem key="profile" className="h-14 gap-2">
-                                <p className="font-bold">Signed in as</p>
-                                <p className="font-semibold">@{user?.username}</p>
+                                <p className="font-bold">Sesión iniciada como</p>
+                                <p className="font-semibold text-primary">@{user?.username}</p>
                             </DropdownItem>
-                            <DropdownItem key="settings" startContent={<span className="material-symbols-outlined text-lg">settings</span>}>My Settings</DropdownItem>
-                            <DropdownItem key="help" startContent={<span className="material-symbols-outlined text-lg">help</span>}>Help & Feedback</DropdownItem>
-                            <DropdownItem key="logout" color="danger" onPress={logout} startContent={<span className="material-symbols-outlined text-lg">logout</span>}>Log Out</DropdownItem>
+                            <DropdownItem
+                                key="settings"
+                                startContent={<span className="material-symbols-outlined text-lg opacity-60">settings</span>}
+                                description="Gestionar tus preferencias"
+                            >
+                                Ajustes
+                            </DropdownItem>
+                            <DropdownItem
+                                key="help"
+                                startContent={<span className="material-symbols-outlined text-lg opacity-60">help</span>}
+                                description="Preguntas frecuentes y soporte"
+                            >
+                                Ayuda & Feedback
+                            </DropdownItem>
+                            <DropdownItem
+                                key="logout"
+                                color="danger"
+                                onPress={logout}
+                                className="text-danger"
+                                startContent={<span className="material-symbols-outlined text-lg">logout</span>}
+                                description="Cerrar la sesión actual"
+                            >
+                                Salir
+                            </DropdownItem>
                         </DropdownMenu>
                     </Dropdown>
                 ) : (

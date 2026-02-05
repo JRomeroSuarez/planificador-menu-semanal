@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Checkbox, Button } from "@heroui/react";
+import { Checkbox, Button, Tooltip } from "@heroui/react";
 
 interface ShoppingListItemProps {
     name: string;
@@ -22,15 +22,17 @@ const ShoppingListItem = ({ name, quantities, onRemove }: ShoppingListItemProps)
                 <p className="text-xs text-foreground font-medium">{name}</p>
                 {quantities && <p className="text-[10px] text-default-400">{quantities}</p>}
             </div>
-            <Button
-                isIconOnly
-                size="sm"
-                variant="light"
-                onPress={onRemove}
-                className="opacity-0 group-hover:opacity-100 min-w-8 w-8 h-8 text-default-400 hover:text-danger"
-            >
-                <span className="material-symbols-outlined text-[16px]">delete</span>
-            </Button>
+            <Tooltip content="Eliminar" size="sm" color="danger" closeDelay={0}>
+                <Button
+                    isIconOnly
+                    size="sm"
+                    variant="light"
+                    onPress={onRemove}
+                    className="opacity-0 group-hover:opacity-100 min-w-8 w-8 h-8 text-default-400 hover:text-danger"
+                >
+                    <span className="material-symbols-outlined text-[16px]">delete</span>
+                </Button>
+            </Tooltip>
         </div>
     );
 };

@@ -53,6 +53,7 @@ const PlannerView = ({ onLoginClick }: PlannerViewProps) => {
                         onLoad={loadPlan}
                         onPrint={handlePrint}
                         onOpenShoppingList={onOpen}
+                        shoppingListCount={derivedShoppingList.length + manualIngredients.length}
                     />
 
                     <PlannerGrid

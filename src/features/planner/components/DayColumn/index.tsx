@@ -85,10 +85,11 @@ const DayColumn = ({ day, meals, onRemoveMeal }: DayColumnProps) => {
 
     return (
         <div className="flex flex-col gap-6">
-            <div className="text-center pb-4">
-                <span className="block text-xs font-bold text-primary uppercase tracking-[0.2em] mb-1">{dayName}</span>
-                <Divider className="bg-primary/20 h-1 rounded-full" />
-            </div>
+            <Card className="border-none bg-primary/10 shadow-none py-2">
+                <CardBody className="py-0 flex items-center justify-center">
+                    <span className="text-xs font-black text-primary uppercase tracking-[0.3em]">{dayName}</span>
+                </CardBody>
+            </Card>
             <div className="flex flex-col gap-6">
                 <MealSlot day={day} mealTime="lunch" title="Lunch" meals={meals.lunch} onRemoveMeal={onRemoveMeal} />
                 <MealSlot day={day} mealTime="dinner" title="Dinner" meals={meals.dinner} onRemoveMeal={onRemoveMeal} />
