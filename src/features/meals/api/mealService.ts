@@ -53,3 +53,19 @@ export const deleteMeal = async (id: number): Promise<void> => {
 
     if (!response.ok) throw new Error('Error al eliminar receta');
 };
+
+export const updateMeal = async (id: number, userId: number, mealData: Omit<Meal, 'id'>): Promise<Meal> => {
+    const response = await fetch(`${API_URL}/recipes/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            ...mealData,
+            userId
+        }),
+    });
+
+    if (!response.ok) throw new Error('Error al actualizar receta');
+    return response.json();
+};

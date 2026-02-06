@@ -20,6 +20,9 @@ router.get('/', async (req: Request, res: Response) => {
             id: recipe.id,
             name: recipe.name,
             type: recipe.type.split(','), // Convert comma-separated to array
+            prepTime: recipe.prepTime,
+            servings: recipe.servings,
+            instructions: recipe.instructions,
             ingredients: recipe.ingredients.map(ing => ({
                 name: ing.name,
                 quantity: ing.quantity
@@ -53,6 +56,9 @@ router.get('/:id', async (req: Request, res: Response) => {
             id: recipe.id,
             name: recipe.name,
             type: recipe.type.split(','),
+            prepTime: recipe.prepTime,
+            servings: recipe.servings,
+            instructions: recipe.instructions,
             ingredients: recipe.ingredients.map(ing => ({
                 name: ing.name,
                 quantity: ing.quantity
@@ -69,7 +75,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 // Create new recipe
 router.post('/', async (req: Request, res: Response) => {
     try {
-        const { name, type, ingredients, userId } = req.body;
+        const { name, type, ingredients, userId, prepTime, servings, instructions } = req.body;
 
         if (!userId) {
             return res.status(401).json({ error: 'Usuario no autenticado' });
@@ -80,6 +86,9 @@ router.post('/', async (req: Request, res: Response) => {
                 name,
                 type: type.join(','), // Convert array to comma-separated string
                 ownerId: Number(userId),
+                prepTime: prepTime ? Number(prepTime) : undefined,
+                servings: servings ? Number(servings) : undefined,
+                instructions,
                 ingredients: {
                     create: ingredients.map((ing: { name: string; quantity: string }) => ({
                         name: ing.name,
@@ -96,6 +105,9 @@ router.post('/', async (req: Request, res: Response) => {
             id: recipe.id,
             name: recipe.name,
             type: recipe.type.split(','),
+            prepTime: recipe.prepTime,
+            servings: recipe.servings,
+            instructions: recipe.instructions,
             ingredients: recipe.ingredients.map(ing => ({
                 name: ing.name,
                 quantity: ing.quantity
@@ -128,6 +140,58 @@ router.delete('/:id', async (req: Request, res: Response) => {
     } catch (error) {
         console.error('Error eliminando receta:', error);
         res.status(500).json({ error: 'Error al eliminar receta' });
+    }
+});
+
+// Update recipe
+router.put('/:id', async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const { name, type, ingredients, userId, prepTime, servings, instructions } = req.body;
+
+        if (!userId) {
+            return res.status(401).json({ error: 'Usuario no autenticado' });
+        }
+
+        const recipe = await prisma.recipe.update({
+            where: { id: Number(id) },
+            data: {
+                name,
+                type: type.join(','),
+                ownerId: Number(userId),
+                prepTime: prepTime ? Number(prepTime) : undefined,
+                servings: servings ? Number(servings) : undefined,
+                instructions,
+                ingredients: {
+                    deleteMany: {},
+                    create: ingredients.map((ing: { name: string; quantity: string }) => ({
+                        name: ing.name,
+                        quantity: ing.quantity
+                    }))
+                }
+            },
+            include: {
+                ingredients: true
+            }
+        });
+
+        const formattedRecipe = {
+            id: recipe.id,
+            name: recipe.name,
+            type: recipe.type.split(','),
+            prepTime: recipe.prepTime,
+            servings: recipe.servings,
+            instructions: recipe.instructions,
+            ingredients: recipe.ingredients.map(ing => ({
+                name: ing.name,
+                quantity: ing.quantity
+            }))
+        };
+
+        res.status(201).json(formattedRecipe);
+    } catch (error) {
+        console.error('Error actualizando receta:', error);
+        res.status(500).json({ error: 'Error al actualizar receta' });
     }
 });
 

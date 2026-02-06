@@ -27,6 +27,7 @@ const AppContent = () => {
                 <Route path="/" element={<PlannerView onLoginClick={openLogin} />} />
                 <Route path="/recetas" element={<RecipesCatalog onLoginClick={openLogin} />} />
                 <Route path="/recetas/nueva" element={<AddRecipePage />} />
+                <Route path="/recetas/editar/:id" element={<AddRecipePage />} />
                 <Route path="/recetas/:id" element={<RecipeDetail />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>

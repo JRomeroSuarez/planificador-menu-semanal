@@ -1,8 +1,10 @@
-import { Input, Button, Progress, Card, CardBody, Select, SelectItem, Textarea, Divider, Chip } from "@heroui/react";
+import { Input, Button, Progress, Card, CardBody, Select, SelectItem, Textarea, Divider, Chip, CircularProgress } from "@heroui/react";
 import { useAddRecipePage } from './useAddRecipePage';
 import { MEAL_TYPES } from '@/utils/constants';
+import { useNavigate } from "react-router-dom";
 
 const AddRecipePage = () => {
+    const navigate = useNavigate();
     const {
         name,
         setName,
@@ -19,8 +21,19 @@ const AddRecipePage = () => {
         instructions,
         setInstructions,
         progress,
-        handleSubmit
+        handleSubmit,
+        isEditing,
+        isLoading
     } = useAddRecipePage();
+
+    if (isLoading) {
+        return (
+            <div className="flex-1 flex flex-col items-center justify-center p-20 gap-4">
+                <CircularProgress size="lg" aria-label="Cargando..." />
+                <p className="font-black text-default-400 uppercase tracking-widest text-sm">Cargando receta...</p>
+            </div>
+        );
+    }
 
     return (
         <main className="flex-1 max-w-[1280px] mx-auto w-full p-4 md:p-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -28,7 +41,7 @@ const AddRecipePage = () => {
             <div className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                 <div className="space-y-3 max-w-2xl w-full">
                     <div className="flex justify-between items-end mb-1">
-                        <h1 className="text-4xl font-black tracking-tight text-foreground">Crear Nueva Receta</h1>
+                        <h1 className="text-4xl font-black tracking-tight text-foreground">{isEditing ? 'Editar Receta' : 'Crear Nueva Receta'}</h1>
                         <div className="text-right">
                             <p className="text-default-400 text-[10px] font-black uppercase tracking-[0.2em]">Progreso</p>
                             <p className="text-primary text-sm font-black">{progress}% Completado</p>
@@ -51,8 +64,8 @@ const AddRecipePage = () => {
                     </div>
                 </div>
                 <div className="flex gap-3 shrink-0">
-                    <Button variant="bordered" className="font-bold border-2 h-12 px-6">Descartar</Button>
-                    <Button color="primary" className="font-black h-12 px-8 shadow-xl shadow-primary/20" onPress={handleSubmit}>Guardar Receta</Button>
+                    <Button variant="bordered" className="font-bold border-2 h-12 px-6" onPress={() => navigate('/recetas')}>Descartar</Button>
+                    <Button color="primary" className="font-black h-12 px-8 shadow-xl shadow-primary/20" onPress={handleSubmit}>{isEditing ? 'Actualizar Receta' : 'Guardar Receta'}</Button>
                 </div>
             </div>
 

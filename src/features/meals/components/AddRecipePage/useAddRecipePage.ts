@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useMemo, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Meal, MealType, Ingredient } from '@/types';
 import * as mealService from '@/features/meals/api/mealService';
 import { useAuth } from '@/features/auth/context/AuthContext';
@@ -7,6 +7,8 @@ import { useAuth } from '@/features/auth/context/AuthContext';
 export const useAddRecipePage = () => {
     const { user, isAuthenticated } = useAuth();
     const navigate = useNavigate();
+    const { id } = useParams<{ id: string }>();
+    const isEditing = !!id;
 
     const [name, setName] = useState('');
     const [types, setTypes] = useState<Set<string>>(new Set());
@@ -14,6 +16,26 @@ export const useAddRecipePage = () => {
     const [servings, setServings] = useState('');
     const [ingredients, setIngredients] = useState<Ingredient[]>([{ name: '', quantity: '' }]);
     const [instructions, setInstructions] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        if (id) {
+            setIsLoading(true);
+            mealService.getMealById(Number(id))
+                .then(meal => {
+                    if (meal) {
+                        setName(meal.name);
+                        setTypes(new Set(meal.type));
+                        setIngredients(meal.ingredients.length ? meal.ingredients : [{ name: '', quantity: '' }]);
+                        setPrepTime(meal.prepTime ? String(meal.prepTime) : '');
+                        setServings(meal.servings ? String(meal.servings) : '');
+                        setInstructions(meal.instructions || '');
+                    }
+                })
+                .catch(err => console.error(err))
+                .finally(() => setIsLoading(false));
+        }
+    }, [id]);
 
     const progress = useMemo(() => {
         let score = 0;
@@ -54,11 +76,19 @@ export const useAddRecipePage = () => {
             const mealData: Omit<Meal, 'id'> = {
                 name,
                 type: Array.from(types) as MealType[],
-                ingredients: ingredients.filter(i => i.name.trim() !== '')
+                ingredients: ingredients.filter(i => i.name.trim() !== ''),
+                prepTime: prepTime ? Number(prepTime) : undefined,
+                servings: servings ? Number(servings) : undefined,
+                instructions
             };
 
-            await mealService.addMeal(Number(user.id), mealData);
-            alert('¡Receta guardada con éxito!');
+            if (isEditing) {
+                await mealService.updateMeal(Number(id), Number(user.id), mealData);
+                alert('¡Receta actualizada con éxito!');
+            } else {
+                await mealService.addMeal(Number(user.id), mealData);
+                alert('¡Receta guardada con éxito!');
+            }
             navigate('/recetas');
         } catch (error) {
             console.error(error);
@@ -83,6 +113,8 @@ export const useAddRecipePage = () => {
         setInstructions,
         progress,
         handleSubmit,
-        isAuthenticated
+        isAuthenticated,
+        isEditing,
+        isLoading
     };
 };

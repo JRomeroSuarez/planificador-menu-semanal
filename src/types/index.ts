@@ -18,6 +18,9 @@ export interface Meal {
     name: string;
     type: MealType[];
     ingredients: Ingredient[];
+    prepTime?: number;
+    servings?: number;
+    instructions?: string;
 }
 
 export interface WeeklyPlan {

@@ -4,6 +4,7 @@ import { MEAL_TYPES } from '@/utils/constants';
 import MealCard from '@/features/planner/components/MealCard';
 import AddMealModal from '../AddMealModal';
 import { useMealList } from './useMealList';
+import { useNavigate } from 'react-router-dom';
 
 interface MealListProps {
     meals: Meal[];
@@ -13,6 +14,7 @@ interface MealListProps {
 }
 
 const MealList = ({ meals, addMeal, onLoginClick, isLoading }: MealListProps) => {
+    const navigate = useNavigate();
     const {
         searchTerm,
         setSearchTerm,
@@ -49,13 +51,13 @@ const MealList = ({ meals, addMeal, onLoginClick, isLoading }: MealListProps) =>
 
                 <div className="flex gap-2">
                     <Button
-                        onPress={handleAddClick}
+                        onPress={() => navigate('/recetas/nueva')}
                         color="primary"
                         variant="flat"
                         className="flex-1 font-bold text-xs"
                         startContent={<span className="material-symbols-outlined text-[18px]">add</span>}
                     >
-                        Nueva
+                        Nueva Receta
                     </Button>
                 </div>
 
