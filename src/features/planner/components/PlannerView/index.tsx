@@ -32,7 +32,7 @@ const PlannerView = ({ onLoginClick }: PlannerViewProps) => {
         loadPlan,
         handlePrint
     } = usePlanner({ onLoginClick });
-
+    console.log(derivedShoppingList);
     return (
         <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
             <main className="flex flex-1 overflow-hidden relative">

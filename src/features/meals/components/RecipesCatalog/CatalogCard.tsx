@@ -8,10 +8,19 @@ interface CatalogCardProps {
     onAdd?: () => void;
 }
 
+import { useShoppingListStore } from "@/features/shopping/store/useShoppingListStore";
+
 const CatalogCard = ({ meal, onAdd }: CatalogCardProps) => {
     const navigate = useNavigate();
-    // Generate a consistent random image seeded by meal name/id
+    const addItem = useShoppingListStore(state => state.addItem);
+
     const imageUrl = `https://loremflickr.com/400/300/food,recipe?lock=${meal.id}`;
+
+    const handleAddToCart = (e: any) => {
+        e.stopPropagation();
+        meal.ingredients.forEach(ing => addItem(ing.name, ing.quantity));
+        alert("Ingredientes añadidos a la lista");
+    };
 
     return (
         <Card
@@ -35,6 +44,16 @@ const CatalogCard = ({ meal, onAdd }: CatalogCardProps) => {
                         className="bg-white/90 backdrop-blur text-slate-600 hover:text-danger shadow-sm"
                     >
                         <span className="material-symbols-outlined text-[20px]">favorite</span>
+                    </Button>
+                    <Button
+                        isIconOnly
+                        radius="full"
+                        size="sm"
+                        variant="flat"
+                        className="bg-white/90 backdrop-blur text-slate-600 hover:text-primary shadow-sm"
+                        onPress={handleAddToCart}
+                    >
+                        <span className="material-symbols-outlined text-[20px]">add_shopping_cart</span>
                     </Button>
                 </div>
                 {meal.type.length > 0 && (

@@ -4,6 +4,7 @@ import { Meal, WeeklyPlan, Ingredient } from '@/types';
 import { DAYS_OF_WEEK } from '@/utils/constants';
 import { useAuth } from '@/features/auth/context/AuthContext';
 import * as mealService from '@/features/meals/api/mealService';
+import { useShoppingListStore } from '@/features/shopping/store/useShoppingListStore';
 
 const initialWeeklyPlan: WeeklyPlan = DAYS_OF_WEEK.reduce((acc: WeeklyPlan, day: string) => ({
     ...acc,
@@ -22,6 +23,7 @@ export const usePlanner = ({ onLoginClick }: UsePlannerProps) => {
     const [manualIngredients, setManualIngredients] = useState<Ingredient[]>([]);
     const [ignoredIngredients, setIgnoredIngredients] = useState<string[]>([]);
     const [activeMeal, setActiveMeal] = useState<Meal | null>(null);
+    const addItem = useShoppingListStore(state => state.addItem);
 
     useEffect(() => {
         setIsLoadingMeals(true);
@@ -85,7 +87,7 @@ export const usePlanner = ({ onLoginClick }: UsePlannerProps) => {
     const derivedShoppingList = useMemo(() => {
         const ingredientsMap = new Map<string, string[]>();
         const allMeals = Object.values(weeklyPlan).flatMap((day: WeeklyPlan[string]) => [...day.lunch, ...day.dinner]);
-
+        console.log(allMeals);
         allMeals.forEach((meal: Meal) => {
             meal.ingredients.forEach(ingredient => {
                 const name = ingredient.name.toLowerCase().trim();
@@ -97,13 +99,14 @@ export const usePlanner = ({ onLoginClick }: UsePlannerProps) => {
             });
         });
 
-        return Array.from(ingredientsMap.entries())
+        const derivedShoppingList = Array.from(ingredientsMap.entries())
             .map(([name, quantities]) => ({
                 name: name.charAt(0).toUpperCase() + name.slice(1),
                 quantities,
             }))
             .filter(ing => !ignoredIngredients.includes(ing.name.toLowerCase()))
             .sort((a, b) => a.name.localeCompare(b.name));
+        return derivedShoppingList;
     }, [weeklyPlan, ignoredIngredients]);
 
     const addManualIngredient = (ingredient: Ingredient) => {

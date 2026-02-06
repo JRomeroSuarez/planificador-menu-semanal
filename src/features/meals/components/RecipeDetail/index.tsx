@@ -1,11 +1,21 @@
 import { Button, Card, CardBody, Chip, Checkbox, Image, Divider, CircularProgress } from "@heroui/react";
 import { useRecipeDetail } from './useRecipeDetail';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
+import { useShoppingListStore } from "@/features/shopping/store/useShoppingListStore";
 
 const RecipeDetail = () => {
     const { meal, isLoading, deleteRecipe } = useRecipeDetail();
     const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();
+    const addItem = useShoppingListStore(state => state.addItem);
+
+    const handleAddIngredientsToShoppingList = () => {
+        if (!meal) return;
+        meal.ingredients.forEach(ing => {
+            addItem(ing.name, ing.quantity);
+        });
+        alert('Ingredientes añadidos a la lista de compra');
+    };
 
     const handleDelete = async () => {
         if (confirm('¿Estás seguro de que quieres eliminar esta receta? Esta acción no se puede deshacer.')) {
@@ -76,7 +86,14 @@ const RecipeDetail = () => {
                                     </div>
                                     <h3 className="text-xl font-black dark:text-white">Ingredientes</h3>
                                 </div>
-                                <Button size="sm" variant="light" color="primary" className="font-bold text-xs uppercase tracking-widest px-0 min-w-0" startContent={<span className="material-symbols-outlined text-sm">add_shopping_cart</span>}>
+                                <Button
+                                    size="sm"
+                                    variant="light"
+                                    color="primary"
+                                    className="font-bold text-xs uppercase tracking-widest px-0 min-w-0"
+                                    startContent={<span className="material-symbols-outlined text-sm">add_shopping_cart</span>}
+                                    onPress={handleAddIngredientsToShoppingList}
+                                >
                                     Añadir todo
                                 </Button>
                             </div>

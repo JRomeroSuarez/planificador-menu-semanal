@@ -8,20 +8,29 @@ import RecipesCatalog from '@/features/meals/components/RecipesCatalog';
 import RecipeDetail from '@/features/meals/components/RecipeDetail';
 import AddRecipePage from '@/features/meals/components/AddRecipePage';
 import { useAppModals } from '@/hooks/useAppModals';
+import ShoppingListDrawer from '@/features/shopping/components/ShoppingListDrawer';
+
 
 const AppContent = () => {
     const {
         isLoginModalOpen,
         isRegisterModalOpen,
+        isShoppingListOpen,
         openLogin,
         openRegister,
+        openShoppingList,
         closeLogin,
-        closeRegister
+        closeRegister,
+        closeShoppingList
     } = useAppModals();
 
     return (
         <div className="flex flex-col min-h-screen">
-            <Header onLoginClick={openLogin} onRegisterClick={openRegister} />
+            <Header
+                onLoginClick={openLogin}
+                onRegisterClick={openRegister}
+                onShoppingListClick={openShoppingList}
+            />
 
             <Routes>
                 <Route path="/" element={<PlannerView onLoginClick={openLogin} />} />
@@ -43,9 +52,15 @@ const AppContent = () => {
                 onClose={closeRegister}
                 onSwitchToLogin={openLogin}
             />
+
+            <ShoppingListDrawer
+                isOpen={isShoppingListOpen}
+                onClose={closeShoppingList}
+            />
         </div>
     );
 }
+
 
 const App = () => {
     return (

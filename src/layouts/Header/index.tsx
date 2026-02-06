@@ -2,13 +2,18 @@ import { NavLink } from 'react-router-dom';
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Avatar } from "@heroui/react";
 import { useAuth } from "@/features/auth/context/AuthContext";
 
+import { useShoppingListStore } from "@/features/shopping/store/useShoppingListStore";
+
 interface HeaderProps {
     onLoginClick: () => void;
     onRegisterClick: () => void;
+    onShoppingListClick: () => void;
 }
 
-const Header = ({ onLoginClick, onRegisterClick }: HeaderProps) => {
+const Header = ({ onLoginClick, onRegisterClick, onShoppingListClick }: HeaderProps) => {
     const { isAuthenticated, user, logout } = useAuth();
+
+    const itemCount = useShoppingListStore(state => state.items.filter(i => !i.checked).length);
 
     return (
         <Navbar isBordered maxWidth="full" className="bg-white/80 dark:bg-background-dark/80 backdrop-blur-md">
@@ -48,6 +53,20 @@ const Header = ({ onLoginClick, onRegisterClick }: HeaderProps) => {
             </NavbarContent>
 
             <NavbarContent justify="end">
+                <NavbarItem>
+                    <Button
+                        isIconOnly
+                        variant="light"
+                        onPress={onShoppingListClick}
+                        className="relative"
+                    >
+                        <span className="material-symbols-outlined text-default-600">shopping_cart</span>
+                        {itemCount > 0 && (
+                            <span className="absolute top-2 right-2 w-2 h-2 bg-danger rounded-full ring-2 ring-white dark:ring-background-dark animate-pulse shadow-sm" />
+                        )}
+                    </Button>
+                </NavbarItem>
+
                 {isAuthenticated ? (
                     <Dropdown placement="bottom-end">
                         <DropdownTrigger>
