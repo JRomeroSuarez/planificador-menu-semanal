@@ -1,35 +1,33 @@
 import { User } from '@/types';
 
-/**
- * Simula una llamada de login a un backend.
- * @param username El nombre de usuario.
- * @param password La contraseña.
- * @returns Una Promesa que se resuelve con los datos del usuario si las credenciales son correctas.
- */
-export const login = (username: string, password: string): Promise<User> => {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            if (username === 'admin' && password === 'admin') {
-                resolve({ username: 'admin' });
-            } else {
-                reject(new Error('Credenciales inválidas. Por favor, inténtalo de nuevo.'));
-            }
-        }, 500); // Simula un retraso de red
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+
+export const login = async (username: string, password: string): Promise<User> => {
+    const response = await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
     });
+
+    if (!response.ok) {
+        throw new Error('Error en login');
+    }
+
+    const data = await response.json();
+    return data.user;
 };
 
-/**
- * Simula una llamada de registro a un backend.
- * @param username El nombre de usuario.
- * @param password La contraseña.
- * @returns Una Promesa que siempre se resuelve para simular un registro exitoso.
- */
-export const register = (username: string, password: string): Promise<User> => {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            // En una aplicación real, aquí se crearía el usuario en la base de datos.
-            // Para la simulación, simplemente devolvemos el usuario como si se hubiera creado.
-            resolve({ username });
-        }, 500); // Simula un retraso de red
+export const register = async (username: string, password: string): Promise<User> => {
+    const response = await fetch(`${API_URL}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
     });
-}
+
+    if (!response.ok) {
+        throw new Error('Error en registro');
+    }
+
+    const data = await response.json();
+    return data.user;
+};

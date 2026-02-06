@@ -57,7 +57,7 @@ export const useAddRecipePage = () => {
                 ingredients: ingredients.filter(i => i.name.trim() !== '')
             };
 
-            await mealService.addMeal(user.username, mealData);
+            await mealService.addMeal(Number(user.id), mealData);
             alert('¡Receta guardada con éxito!');
             navigate('/recetas');
         } catch (error) {

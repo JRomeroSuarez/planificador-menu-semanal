@@ -25,7 +25,7 @@ export const usePlanner = ({ onLoginClick }: UsePlannerProps) => {
 
     useEffect(() => {
         setIsLoadingMeals(true);
-        mealService.getMeals(user?.username || null)
+        mealService.getMeals(user?.id)
             .then((userMeals: Meal[]) => {
                 setMeals(userMeals);
             })
@@ -42,7 +42,7 @@ export const usePlanner = ({ onLoginClick }: UsePlannerProps) => {
             return;
         }
         try {
-            const newMeal = await mealService.addMeal(user.username, mealData);
+            const newMeal = await mealService.addMeal(Number(user.id), mealData);
             setMeals(prev => [...prev, newMeal]);
         } catch (error) {
             console.error("Failed to add meal:", error);

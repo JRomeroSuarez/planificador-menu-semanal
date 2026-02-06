@@ -16,7 +16,7 @@ export const useRecipesCatalog = ({ onLoginClick }: UseRecipesCatalogProps) => {
 
     useEffect(() => {
         setIsLoading(true);
-        mealService.getMeals(user?.username || null)
+        mealService.getMeals(user?.id)
             .then(data => setMeals(data))
             .catch(err => console.error(err))
             .finally(() => setIsLoading(false));

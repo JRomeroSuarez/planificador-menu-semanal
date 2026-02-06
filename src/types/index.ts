@@ -15,7 +15,7 @@ export interface Ingredient {
 
 export interface Meal {
     id: number;
-    name:string;
+    name: string;
     type: MealType[];
     ingredients: Ingredient[];
 }
@@ -28,5 +28,6 @@ export interface WeeklyPlan {
 }
 
 export interface User {
+    id?: number;
     username: string;
 }

@@ -14,7 +14,7 @@ export const useRecipeDetail = () => {
         if (!id) return;
 
         setIsLoading(true);
-        mealService.getMealById(user?.username || null, Number(id))
+        mealService.getMealById(Number(id))
             .then(data => setMeal(data || null))
             .catch(err => console.error(err))
             .finally(() => setIsLoading(false));

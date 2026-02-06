@@ -1,84 +1,47 @@
-import { Meal, MealType } from '@/types';
+import { Meal } from '@/types';
 
-const initialMeals: Meal[] = [
-    { id: 1, name: 'Lentejas con chorizo', type: [MealType.Legumbre], ingredients: [{ name: 'lentejas pardinas', quantity: '400g' }, { name: 'chorizo', quantity: '1 ud' }, { name: 'zanoria', quantity: '2 uds' }, { name: 'patata', quantity: '2 uds' }] },
-    { id: 2, name: 'Salmón con espárragos', type: [MealType.Pescado], ingredients: [{ name: 'lomo de salmón', quantity: '2 uds' }, { name: 'limón', quantity: '1 ud' }, { name: 'aceite de oliva', quantity: 'un chorrito' }, { name: 'espárragos', quantity: '1 manojo' }] },
-    { id: 3, name: 'Pollo al curry', type: [MealType.Carne], ingredients: [{ name: 'pechuga de pollo', quantity: '400g' }, { name: 'leche de coco', quantity: '1 lata' }, { name: 'curry en polvo', quantity: '2 cdas' }, { name: 'arroz basmati', quantity: '200g' }, { name: 'cebolla', quantity: '1 ud' }] },
-    { id: 4, name: 'Ensalada César con Pollo', type: [MealType.Ensalada, MealType.Carne], ingredients: [{ name: 'lechuga romana', quantity: '1 ud' }, { name: 'pechuga de pollo', quantity: '200g' }, { name: 'pan de molde', quantity: '2 rebanadas' }, { name: 'queso parmesano', quantity: '50g' }, { name: 'salsa césar', quantity: 'al gusto' }] },
-];
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
-const getMealsFromStorage = (username: string): Meal[] => {
-    try {
-        const key = `userMeals_${username}`;
-        const savedMeals = localStorage.getItem(key);
-        if (savedMeals) {
-            return JSON.parse(savedMeals);
-        }
-        // If no meals for this user, start them with the initial list
-        localStorage.setItem(key, JSON.stringify(initialMeals));
-        return initialMeals;
-    } catch (error) {
-        console.error("Error loading meals from localStorage:", error);
-        return initialMeals;
+/**
+ * Obtiene las comidas del backend.
+ * @param userId El ID del usuario.
+ */
+export const getMeals = async (userId: number | undefined): Promise<Meal[]> => {
+    let url = `${API_URL}/recipes`;
+
+    // Si hay usuario, filtramos por él (o mostramos sus recetas + públicas si implementamos eso)
+    // Por ahora, el backend devuelve recetas del usuario si se pasa ID
+    if (userId) {
+        url += `?userId=${userId}`;
     }
+
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Error al obtener recetas');
+
+    return response.json();
 };
 
-const saveMealsToStorage = (username: string, meals: Meal[]) => {
-    try {
-        localStorage.setItem(`userMeals_${username}`, JSON.stringify(meals));
-    } catch (error) {
-        console.error("Error saving meals to localStorage:", error);
+export const addMeal = async (userId: number, mealData: Omit<Meal, 'id'>): Promise<Meal> => {
+    const response = await fetch(`${API_URL}/recipes`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            ...mealData,
+            userId
+        }),
+    });
+
+    if (!response.ok) throw new Error('Error al crear receta');
+    return response.json();
+};
+
+export const getMealById = async (id: number): Promise<Meal | undefined> => {
+    const response = await fetch(`${API_URL}/recipes/${id}`);
+    if (!response.ok) {
+        if (response.status === 404) return undefined;
+        throw new Error('Error al obtener receta');
     }
-};
-
-/**
- * Simula la obtención de comidas de un backend.
- * @param username El nombre de usuario. Si es null, devuelve comidas de prueba.
- * @returns Una Promesa que se resuelve con la lista de comidas.
- */
-export const getMeals = (username: string | null): Promise<Meal[]> => {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            if (username) {
-                resolve(getMealsFromStorage(username));
-            } else {
-                resolve(initialMeals);
-            }
-        }, 300); // Simula retraso de red
-    });
-};
-
-/**
- * Simula añadir una nueva comida para un usuario autenticado.
- * @param username El nombre de usuario.
- * @param mealData Los datos de la nueva comida.
- * @returns Una Promesa que se resuelve con la comida recién creada.
- */
-export const addMeal = (username: string, mealData: Omit<Meal, 'id'>): Promise<Meal> => {
-    return new Promise((resolve, reject) => {
-        if (!username) {
-            return reject(new Error("Usuario no autenticado."));
-        }
-        setTimeout(() => {
-            const userMeals = getMealsFromStorage(username);
-            const newMeal: Meal = { ...mealData, id: Date.now() };
-            const updatedMeals = [...userMeals, newMeal];
-            saveMealsToStorage(username, updatedMeals);
-            resolve(newMeal);
-        }, 300); // Simula retraso de red
-    });
-};
-/**
- * Simula la obtención de una comida por su ID.
- * @param username El nombre de usuario.
- * @param id El ID de la comida.
- * @returns Una Promesa que se resuelve con la comida encontrada.
- */
-export const getMealById = (username: string | null, id: number): Promise<Meal | undefined> => {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            const meals = username ? getMealsFromStorage(username) : initialMeals;
-            resolve(meals.find(m => m.id === id));
-        }, 300);
-    });
+    return response.json();
 };

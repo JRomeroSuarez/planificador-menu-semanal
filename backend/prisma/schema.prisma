@@ -1,0 +1,47 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String   // In a real app, we'd hash this
+  recipes   Recipe[]
+  plans     WeeklyPlanEntry[]
+}
+
+model Recipe {
+  id          Int      @id @default(autoincrement())
+  name        String
+  type        String   // Comma-separated types or JSON string
+  ingredients Ingredient[]
+  owner       User     @relation(fields: [ownerId], references: [id])
+  ownerId     Int
+  plans       WeeklyPlanEntry[]
+}
+
+model Ingredient {
+  id       Int    @id @default(autoincrement())
+  name     String
+  quantity String
+  recipe   Recipe @relation(fields: [recipeId], references: [id])
+  recipeId Int
+}
+
+model WeeklyPlanEntry {
+  id       Int    @id @default(autoincrement())
+  day      String // Monday, Tuesday, etc.
+  slot     String // lunch, dinner
+  user     User   @relation(fields: [userId], references: [id])
+  userId   Int
+  recipe   Recipe @relation(fields: [recipeId], references: [id])
+  recipeId Int
+}
