@@ -20,8 +20,20 @@ export const useRecipeDetail = () => {
             .finally(() => setIsLoading(false));
     }, [id, user]);
 
+    const deleteRecipe = async () => {
+        if (!meal) return;
+        try {
+            await mealService.deleteMeal(meal.id);
+            return true;
+        } catch (error) {
+            console.error(error);
+            return false;
+        }
+    };
+
     return {
         meal,
-        isLoading
+        isLoading,
+        deleteRecipe
     };
 };

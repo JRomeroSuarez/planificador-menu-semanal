@@ -45,3 +45,11 @@ export const getMealById = async (id: number): Promise<Meal | undefined> => {
     }
     return response.json();
 };
+
+export const deleteMeal = async (id: number): Promise<void> => {
+    const response = await fetch(`${API_URL}/recipes/${id}`, {
+        method: 'DELETE',
+    });
+
+    if (!response.ok) throw new Error('Error al eliminar receta');
+};

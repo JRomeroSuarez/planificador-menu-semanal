@@ -3,8 +3,17 @@ import { useRecipeDetail } from './useRecipeDetail';
 import { NavLink, useNavigate } from 'react-router-dom';
 
 const RecipeDetail = () => {
-    const { meal, isLoading } = useRecipeDetail();
+    const { meal, isLoading, deleteRecipe } = useRecipeDetail();
     const navigate = useNavigate();
+
+    const handleDelete = async () => {
+        if (confirm('¿Estás seguro de que quieres eliminar esta receta? Esta acción no se puede deshacer.')) {
+            const success = await deleteRecipe();
+            if (success) {
+                navigate('/recetas');
+            }
+        }
+    };
 
     if (isLoading) {
         return (
@@ -101,6 +110,15 @@ const RecipeDetail = () => {
                                 </p>
                             </div>
                             <div className="flex gap-2 no-print shrink-0">
+                                <Button
+                                    isIconOnly
+                                    radius="full"
+                                    variant="flat"
+                                    className="bg-default-100 hover:text-danger transition-colors"
+                                    onPress={handleDelete}
+                                >
+                                    <span className="material-symbols-outlined">delete</span>
+                                </Button>
                                 <Button isIconOnly radius="full" variant="flat" className="bg-default-100 hover:text-primary transition-colors">
                                     <span className="material-symbols-outlined">share</span>
                                 </Button>
