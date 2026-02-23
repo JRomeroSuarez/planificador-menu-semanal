@@ -30,9 +30,13 @@ router.get('/', async (req: Request, res: Response) => {
         }));
 
         res.json(formattedRecipes);
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error obteniendo recetas:', error);
-        res.status(500).json({ error: 'Error al obtener recetas' });
+        res.status(500).json({
+            error: 'Error al obtener recetas',
+            message: error.message,
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        });
     }
 });
 

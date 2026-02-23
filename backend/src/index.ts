@@ -9,9 +9,28 @@ const app = express();
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3001;
 
+// Basic check for environment variables in production
+if (process.env.NODE_ENV === 'production' && !process.env.DATABASE_URL) {
+    console.error('❌ CRITICAL ERROR: DATABASE_URL is not defined in environment variables!');
+} else if (process.env.DATABASE_URL) {
+    console.log('✅ DATABASE_URL is defined');
+}
+
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+    optionsSuccessStatus: 200
+}));
 app.use(express.json());
+
+// Global Error logging middleware to help debug 500s in Vercel
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.url}`);
+    next();
+});
 
 // Routes
 app.use('/api/auth', authRoutes);
