@@ -1,20 +1,36 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Planificador de Menús Semanal
 
-# Run and deploy your AI Studio app
+Este proyecto está dividido en dos partes principales:
 
-This contains everything you need to run your app locally.
+- **Frontend**: Aplicación React construida con Vite.
+- **Backend**: API Node.js con Express y Prisma.
 
-View your app in AI Studio: https://ai.studio/apps/drive/1P0jjBTjHnoY8EtM8XjfY0ACvhuCV6lxi
+## Estructura del Proyecto
 
-## Run Locally
+```
+planificador-de-menus-semanal/
+├── frontend/          # Aplicación React
+├── backend/           # API Node.js
+└── package.json       # Configuración de root (workspaces)
+```
 
-**Prerequisites:**  Node.js
+## Cómo empezar
 
+1. **Instalar todas las dependencias**:
+   ```bash
+   npm run install:all
+   ```
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+2. **Ejecutar en desarrollo**:
+   - Para ejecutar ambos (frontend y backend):
+     ```bash
+     npm run dev
+     ```
+   - Solo frontend:
+     ```bash
+     npm run dev:frontend
+     ```
+   - Solo backend:
+     ```bash
+     npm run dev:backend
+     ```
