@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: planificador-menu-backend
+    env: node
+    rootDir: backend
+    buildCommand: npm install && npm run build && npx prisma generate
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: DATABASE_URL
+        value: file:./dev.db
+    # Nota: El plan gratuito de Render NO tiene persistencia de disco.
+    # Los datos de SQLite se borrarán cada vez que el servidor se reinicie.
