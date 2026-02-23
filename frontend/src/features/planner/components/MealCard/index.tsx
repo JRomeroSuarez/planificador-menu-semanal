@@ -35,7 +35,7 @@ const MealCard = ({ meal, isOverlay = false }: MealCardProps) => {
                 <div className="flex justify-between items-start mb-2">
                     <div className="flex flex-wrap gap-1">
                         {meal.type.map(t => {
-                            const tagColors = MealTypeColors[t];
+                            const tagColors = MealTypeColors[t as MealType] || MealTypeColors[MealType.Otro];
                             return (
                                 <Chip
                                     key={t}
