@@ -14,23 +14,17 @@ planificador-de-menus-semanal/
 └── package.json       # Configuración de root (workspaces)
 ```
 
-## Cómo empezar
+## Despliegue (Vercel)
 
-1. **Instalar todas las dependencias**:
-   ```bash
-   npm run install:all
-   ```
+Este proyecto está preparado para ser desplegado en **Vercel** (sin necesidad de tarjeta).
 
-2. **Ejecutar en desarrollo**:
-   - Para ejecutar ambos (frontend y backend):
-     ```bash
-     npm run dev
-     ```
-   - Solo frontend:
-     ```bash
-     npm run dev:frontend
-     ```
-   - Solo backend:
-     ```bash
-     npm run dev:backend
-     ```
+### 1. Backend (API)
+- Crea un nuevo proyecto en Vercel.
+- Selecciona el repositorio.
+- En **Root Directory**, selecciona la carpeta `backend`.
+- Configura las variables de entorno (ej: `DATABASE_URL` de Neon.tech).
+
+### 2. Frontend (App)
+- Crea otro proyecto en Vercel con el mismo repositorio.
+- En **Root Directory**, selecciona la carpeta `frontend`.
+- Configura `VITE_API_URL` apuntando a la URL del backend que te dio Vercel.
