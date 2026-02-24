@@ -1,13 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Work+Sans:wght@300;400;500;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+    :root {
+        --primary: 61, 38, 252;
+        --hero-primary: #3d26fc;
+    }
 
-    input:focus,
-    textarea:focus,
-    select:focus {
-        outline: none !important;
-        box-shadow: none !important;
+    * {
+        font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    .display-font {
+        font-family: 'Work Sans', sans-serif !important;
+        @apply tracking-tight font-extrabold;
+    }
+
+    body {
+        @apply bg-[#f9fafb] text-slate-900 antialiased;
+        min-height: 100vh;
+    }
+}
+
+
+@layer components {
+    .glass-morphism {
+        @apply bg-white/70 backdrop-blur-md border border-white/20;
+    }
+
+    .premium-shadow {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
     }
 }

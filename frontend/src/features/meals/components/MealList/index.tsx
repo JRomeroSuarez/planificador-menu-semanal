@@ -29,9 +29,11 @@ const MealList = ({ meals, addMeal, onLoginClick, isLoading }: MealListProps) =>
     return (
         <div className="flex flex-col h-full bg-white dark:bg-background-dark">
             <div className="p-6 flex flex-col gap-6 sticky top-0 bg-white dark:bg-background-dark z-10 border-b border-divider shadow-sm">
-                <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-primary">book</span>
-                    <h1 className="text-foreground text-lg font-black tracking-tight">Recetario</h1>
+                <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <span className="material-symbols-outlined text-primary text-lg">book</span>
+                    </div>
+                    <h1 className="text-foreground text-xl font-extrabold tracking-tight display-font">Recetario</h1>
                 </div>
 
                 <Input

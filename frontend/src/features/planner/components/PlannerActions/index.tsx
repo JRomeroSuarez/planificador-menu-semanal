@@ -12,7 +12,7 @@ const PlannerActions = ({ onSave, onLoad, onPrint, onOpenShoppingList, shoppingL
     return (
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 no-print gap-4">
             <div>
-                <h2 className="text-3xl font-extrabold text-[#121118] dark:text-white tracking-tight">Planificador Semanal</h2>
+                <h2 className="text-4xl font-extrabold text-[#121118] dark:text-white tracking-tighter display-font">Planificador Semanal</h2>
                 <p className="text-[#686189] text-base font-medium mt-1">Organiza tus comidas, simplifica tus compras.</p>
             </div>
             <div className="flex flex-wrap gap-2">
