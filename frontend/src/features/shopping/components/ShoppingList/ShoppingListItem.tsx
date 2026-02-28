@@ -1,26 +1,25 @@
-import { useState } from 'react';
 import { Checkbox, Button, Tooltip } from "@heroui/react";
 
 interface ShoppingListItemProps {
     name: string;
-    quantities: string;
+    quantity: string;
+    checked: boolean;
+    onToggle: () => void;
     onRemove: () => void;
 }
 
-const ShoppingListItem = ({ name, quantities, onRemove }: ShoppingListItemProps) => {
-    const [isSelected, setIsSelected] = useState(false);
-
+const ShoppingListItem = ({ name, quantity, checked, onToggle, onRemove }: ShoppingListItemProps) => {
     return (
         <div className="flex items-center gap-2 group py-1">
             <Checkbox
-                isSelected={isSelected}
-                onValueChange={setIsSelected}
+                isSelected={checked}
+                onValueChange={onToggle}
                 size="sm"
                 color="primary"
             />
-            <div className={`flex-1 transition-all ${isSelected ? 'opacity-40 line-through' : ''}`}>
+            <div className={`flex-1 transition-all ${checked ? 'opacity-40 line-through' : ''}`}>
                 <p className="text-xs text-foreground font-medium">{name}</p>
-                {quantities && <p className="text-[10px] text-default-400">{quantities}</p>}
+                {quantity && <p className="text-[10px] text-default-400">{quantity}</p>}
             </div>
             <Tooltip content="Eliminar" size="sm" color="danger" closeDelay={0}>
                 <Button

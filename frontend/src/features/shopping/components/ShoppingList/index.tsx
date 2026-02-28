@@ -1,29 +1,45 @@
-import { Button, Input, ScrollShadow, Divider, CheckboxGroup } from "@heroui/react";
-import { useShoppingListStore } from '@/features/shopping/store/useShoppingListStore';
+import { Button, Input, ScrollShadow, Divider, Alert } from "@heroui/react";
+import { Ingredient } from '@/types';
 import ShoppingListItem from './ShoppingListItem';
-import { useState } from "react";
+import { useShoppingList } from '../../hooks/useShoppingList';
 
-const ShoppingList = () => {
-    const { items, addItem, removeItem } = useShoppingListStore();
-    const [newItem, setNewItem] = useState('');
-    console.log(items);
-    const handleAddItem = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (newItem.trim() === '') return;
+interface ShoppingListProps {
+    derivedIngredients: { name: string; quantities: string[]; }[];
+    manualIngredients: Ingredient[];
+    onAddIngredient: (ingredient: Ingredient) => void;
+    onRemoveManualIngredient: (index: number) => void;
+    onRemoveDerivedIngredient: (name: string) => void;
+}
 
-        const parts = newItem.split('-').map(p => p.trim());
-        addItem(parts[0], parts[1] || '');
-        setNewItem('');
-    };
+const ShoppingList = (props: ShoppingListProps) => {
+    const {
+        newItem,
+        setNewItem,
+        showCopyAlert,
+        setShowCopyAlert,
+        handleAddItem,
+        handleExport,
+        totalCount,
+        onRemoveManualIngredient,
+        onRemoveDerivedIngredient
+    } = useShoppingList(props);
 
-    const handleExport = () => {
-        const text = items.map(i => `- ${i.name} ${i.quantity ? `(${i.quantity})` : ''}`).join('\n');
-        navigator.clipboard.writeText(text);
-        alert("Lista copiada al portapapeles");
-    };
+    const { derivedIngredients, manualIngredients } = props;
 
     return (
-        <div className="flex flex-col h-full bg-white dark:bg-background-dark p-6 gap-6">
+        <div className="flex flex-col h-full bg-white dark:bg-background-dark p-6 gap-6 relative">
+            {showCopyAlert && (
+                <div className="absolute top-4 left-6 right-6 z-50 animate-in fade-in slide-in-from-top-4 duration-300">
+                    <Alert
+                        color="success"
+                        variant="flat"
+                        title="¡Copiado!"
+                        description="Lista copiada al portapapeles"
+                        onClose={() => setShowCopyAlert(false)}
+                    />
+                </div>
+            )}
+
             <div className="flex flex-col items-center">
                 <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center mb-2">
                     <span className="material-symbols-outlined text-primary text-2xl">shopping_cart</span>
@@ -33,25 +49,52 @@ const ShoppingList = () => {
             </div>
 
             <ScrollShadow className="flex-1 pr-1 -mr-1">
-                <CheckboxGroup label="Artículos" classNames={{ label: "hidden" }}>
-                    {items.length > 0 ? (
-                        <div className="space-y-1">
-                            {items.map(item => (
-                                <ShoppingListItem
-                                    key={item.id}
-                                    name={item.name}
-                                    quantities={item.quantity || ''}
-                                    onRemove={() => removeItem(item.id)}
-                                />
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="text-center py-20 text-default-400">
-                            <span className="material-symbols-outlined text-[48px] mb-4 block opacity-10">shopping_basket</span>
-                            <p className="text-xs font-medium uppercase tracking-widest">Tu lista está vacía</p>
-                        </div>
-                    )}
-                </CheckboxGroup>
+                {totalCount > 0 ? (
+                    <div className="space-y-6">
+                        {/* Recetas (Derived) */}
+                        {derivedIngredients.length > 0 && (
+                            <div className="space-y-2">
+                                <p className="text-[10px] font-bold text-primary uppercase tracking-wider px-1">De tus recetas</p>
+                                <div className="space-y-1">
+                                    {derivedIngredients.map((item) => (
+                                        <ShoppingListItem
+                                            key={`derived-${item.name}`}
+                                            name={item.name}
+                                            quantity={item.quantities.join(', ')}
+                                            checked={false}
+                                            onToggle={() => { }}
+                                            onRemove={() => onRemoveDerivedIngredient(item.name)}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Manuales (Manual) */}
+                        {manualIngredients.length > 0 && (
+                            <div className="space-y-2">
+                                <p className="text-[10px] font-bold text-primary uppercase tracking-wider px-1">Añadidos a mano</p>
+                                <div className="space-y-1">
+                                    {manualIngredients.map((item, index) => (
+                                        <ShoppingListItem
+                                            key={`manual-${index}`}
+                                            name={item.name}
+                                            quantity={item.quantity}
+                                            checked={false}
+                                            onToggle={() => { }}
+                                            onRemove={() => onRemoveManualIngredient(index)}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                ) : (
+                    <div className="text-center py-20 text-default-400">
+                        <span className="material-symbols-outlined text-[48px] mb-4 block opacity-10">shopping_basket</span>
+                        <p className="text-xs font-medium uppercase tracking-widest">Tu lista está vacía</p>
+                    </div>
+                )}
             </ScrollShadow>
 
             <div className="mt-auto flex flex-col gap-4">

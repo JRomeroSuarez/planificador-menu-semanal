@@ -33,7 +33,23 @@ export const usePlanner = ({ onLoginClick }: UsePlannerProps) => {
             })
             .catch((error: Error) => console.error("Failed to load meals:", error))
             .finally(() => setIsLoadingMeals(false));
+
+        // Load persisted shopping list data
+        const savedManual = localStorage.getItem('manualIngredients');
+        if (savedManual) setManualIngredients(JSON.parse(savedManual));
+
+        const savedIgnored = localStorage.getItem('ignoredIngredients');
+        if (savedIgnored) setIgnoredIngredients(JSON.parse(savedIgnored));
     }, [user]);
+
+    // Persist changes
+    useEffect(() => {
+        localStorage.setItem('manualIngredients', JSON.stringify(manualIngredients));
+    }, [manualIngredients]);
+
+    useEffect(() => {
+        localStorage.setItem('ignoredIngredients', JSON.stringify(ignoredIngredients));
+    }, [ignoredIngredients]);
 
     const findMealById = useCallback((id: number): Meal | undefined =>
         meals.find(m => m.id === id), [meals]);
@@ -101,11 +117,12 @@ export const usePlanner = ({ onLoginClick }: UsePlannerProps) => {
 
         const derivedShoppingList = Array.from(ingredientsMap.entries())
             .map(([name, quantities]) => ({
-                name: name.charAt(0).toUpperCase() + name.slice(1),
+                name: name ? name.charAt(0).toUpperCase() + name.slice(1) : "Sin nombre",
                 quantities,
             }))
             .filter(ing => !ignoredIngredients.includes(ing.name.toLowerCase()))
             .sort((a, b) => a.name.localeCompare(b.name));
+        console.log("Calculated derivedShoppingList:", derivedShoppingList);
         return derivedShoppingList;
     }, [weeklyPlan, ignoredIngredients]);
 

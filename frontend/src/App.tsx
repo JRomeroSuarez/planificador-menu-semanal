@@ -8,8 +8,6 @@ import RecipesCatalog from '@/features/meals/components/RecipesCatalog';
 import RecipeDetail from '@/features/meals/components/RecipeDetail';
 import AddRecipePage from '@/features/meals/components/AddRecipePage';
 import { useAppModals } from '@/hooks/useAppModals';
-import ShoppingListDrawer from '@/features/shopping/components/ShoppingListDrawer';
-
 
 const AppContent = () => {
     const {
@@ -53,10 +51,6 @@ const AppContent = () => {
                 onSwitchToLogin={openLogin}
             />
 
-            <ShoppingListDrawer
-                isOpen={isShoppingListOpen}
-                onClose={closeShoppingList}
-            />
         </div>
     );
 }
