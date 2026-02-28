@@ -2,7 +2,8 @@ import { useState, useMemo, useCallback, useEffect } from 'react';
 import { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import { Meal, WeeklyPlan, Ingredient } from '@/types';
 import { DAYS_OF_WEEK } from '@/utils/constants';
-import { useAuth } from '@/features/auth/context/AuthContext';
+import { useAuthStore } from '@/features/auth/store/useAuthStore';
+import { useUIStore } from '@/store/useUIStore';
 import * as mealService from '@/features/meals/api/mealService';
 import { useShoppingListStore } from '@/features/shopping/store/useShoppingListStore';
 
@@ -11,12 +12,9 @@ const initialWeeklyPlan: WeeklyPlan = DAYS_OF_WEEK.reduce((acc: WeeklyPlan, day:
     [day]: { lunch: [], dinner: [] }
 }), {});
 
-interface UsePlannerProps {
-    onLoginClick: () => void;
-}
-
-export const usePlanner = ({ onLoginClick }: UsePlannerProps) => {
-    const { user } = useAuth();
+export const usePlanner = () => {
+    const { user } = useAuthStore();
+    const { openLogin } = useUIStore();
     const [meals, setMeals] = useState<Meal[]>([]);
     const [isLoadingMeals, setIsLoadingMeals] = useState(true);
     const [weeklyPlan, setWeeklyPlan] = useState<WeeklyPlan>(initialWeeklyPlan);
@@ -56,7 +54,7 @@ export const usePlanner = ({ onLoginClick }: UsePlannerProps) => {
 
     const addMeal = async (mealData: Omit<Meal, 'id'>) => {
         if (!user) {
-            onLoginClick();
+            openLogin();
             return;
         }
         try {
@@ -103,7 +101,7 @@ export const usePlanner = ({ onLoginClick }: UsePlannerProps) => {
     const derivedShoppingList = useMemo(() => {
         const ingredientsMap = new Map<string, string[]>();
         const allMeals = Object.values(weeklyPlan).flatMap((day: WeeklyPlan[string]) => [...day.lunch, ...day.dinner]);
-        console.log(allMeals);
+
         allMeals.forEach((meal: Meal) => {
             meal.ingredients.forEach(ingredient => {
                 const name = ingredient.name.toLowerCase().trim();
@@ -122,7 +120,7 @@ export const usePlanner = ({ onLoginClick }: UsePlannerProps) => {
             }))
             .filter(ing => !ignoredIngredients.includes(ing.name.toLowerCase()))
             .sort((a, b) => a.name.localeCompare(b.name));
-        console.log("Calculated derivedShoppingList:", derivedShoppingList);
+
         return derivedShoppingList;
     }, [weeklyPlan, ignoredIngredients]);
 

@@ -2,10 +2,10 @@ import { useState, useMemo, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Meal, MealType, Ingredient } from '@/types';
 import * as mealService from '@/features/meals/api/mealService';
-import { useAuth } from '@/features/auth/context/AuthContext';
+import { useAuthStore } from '@/features/auth/store/useAuthStore';
 
 export const useAddRecipePage = () => {
-    const { user, isAuthenticated } = useAuth();
+    const { user, isAuthenticated } = useAuthStore();
     const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();
     const isEditing = !!id;

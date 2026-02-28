@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '@/features/auth/context/AuthContext';
+import { useAuthStore } from '@/features/auth/store/useAuthStore';
 
 interface UseLoginModalProps {
     isOpen: boolean;
@@ -7,7 +7,7 @@ interface UseLoginModalProps {
 }
 
 export const useLoginModal = ({ isOpen, onClose }: UseLoginModalProps) => {
-    const { login } = useAuth();
+    const { login } = useAuthStore();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');

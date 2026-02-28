@@ -1,17 +1,13 @@
 import { NavLink } from 'react-router-dom';
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Avatar } from "@heroui/react";
-import { useAuth } from "@/features/auth/context/AuthContext";
+import { useAuthStore } from "@/features/auth/store/useAuthStore";
+import { useUIStore } from "@/store/useUIStore";
 
 import { useShoppingListStore } from "@/features/shopping/store/useShoppingListStore";
 
-interface HeaderProps {
-    onLoginClick: () => void;
-    onRegisterClick: () => void;
-    onShoppingListClick: () => void;
-}
-
-const Header = ({ onLoginClick, onRegisterClick, onShoppingListClick }: HeaderProps) => {
-    const { isAuthenticated, user, logout } = useAuth();
+const Header = () => {
+    const { isAuthenticated, user, logout } = useAuthStore();
+    const { openLogin, openRegister, openShoppingList } = useUIStore();
 
     const itemCount = useShoppingListStore(state => state.items.filter(i => !i.checked).length);
 
@@ -57,7 +53,7 @@ const Header = ({ onLoginClick, onRegisterClick, onShoppingListClick }: HeaderPr
                     <Button
                         isIconOnly
                         variant="light"
-                        onPress={onShoppingListClick}
+                        onPress={openShoppingList}
                         className="relative"
                     >
                         <span className="material-symbols-outlined text-default-600">shopping_cart</span>
@@ -114,10 +110,10 @@ const Header = ({ onLoginClick, onRegisterClick, onShoppingListClick }: HeaderPr
                 ) : (
                     <>
                         <NavbarItem className="hidden lg:flex">
-                            <Link href="#" onPress={onLoginClick} className="text-sm font-bold text-foreground">Login</Link>
+                            <Link href="#" onPress={openLogin} className="text-sm font-bold text-foreground">Login</Link>
                         </NavbarItem>
                         <NavbarItem>
-                            <Button onPress={onRegisterClick} color="primary" variant="flat" className="font-bold text-sm px-6">
+                            <Button onPress={openRegister} color="primary" variant="flat" className="font-bold text-sm px-6">
                                 Sign Up
                             </Button>
                         </NavbarItem>

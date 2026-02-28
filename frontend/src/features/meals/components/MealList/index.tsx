@@ -9,11 +9,10 @@ import { useNavigate } from 'react-router-dom';
 interface MealListProps {
     meals: Meal[];
     addMeal: (meal: Omit<Meal, 'id'>) => void;
-    onLoginClick: () => void;
     isLoading: boolean;
 }
 
-const MealList = ({ meals, addMeal, onLoginClick, isLoading }: MealListProps) => {
+const MealList = ({ meals, addMeal, isLoading }: MealListProps) => {
     const navigate = useNavigate();
     const {
         searchTerm,
@@ -24,7 +23,7 @@ const MealList = ({ meals, addMeal, onLoginClick, isLoading }: MealListProps) =>
         setAddModalOpen,
         filteredMeals,
         handleAddClick
-    } = useMealList({ meals, onLoginClick });
+    } = useMealList({ meals });
 
     return (
         <div className="flex flex-col h-full bg-white dark:bg-background-dark">

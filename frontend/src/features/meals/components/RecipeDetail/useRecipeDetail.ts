@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Meal } from '@/types';
 import * as mealService from '@/features/meals/api/mealService';
-import { useAuth } from '@/features/auth/context/AuthContext';
+import { useAuthStore } from '@/features/auth/store/useAuthStore';
 
 export const useRecipeDetail = () => {
     const { id } = useParams<{ id: string }>();
-    const { user } = useAuth();
+    const { user } = useAuthStore();
     const [meal, setMeal] = useState<Meal | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 

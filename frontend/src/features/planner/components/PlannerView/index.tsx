@@ -8,11 +8,7 @@ import PlannerActions from '../PlannerActions';
 import PlannerGrid from '../PlannerGrid';
 import { usePlanner } from '../../hooks/usePlanner';
 
-interface PlannerViewProps {
-    onLoginClick: () => void;
-}
-
-const PlannerView = ({ onLoginClick }: PlannerViewProps) => {
+const PlannerView = () => {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const {
         meals,
@@ -31,8 +27,7 @@ const PlannerView = ({ onLoginClick }: PlannerViewProps) => {
         savePlan,
         loadPlan,
         handlePrint
-    } = usePlanner({ onLoginClick });
-    console.log(derivedShoppingList);
+    } = usePlanner();
     return (
         <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
             <main className="flex flex-1 overflow-hidden relative">
@@ -41,7 +36,7 @@ const PlannerView = ({ onLoginClick }: PlannerViewProps) => {
                     <MealList
                         meals={meals}
                         addMeal={addMeal}
-                        onLoginClick={onLoginClick}
+
                         isLoading={isLoadingMeals}
                     />
                 </aside>

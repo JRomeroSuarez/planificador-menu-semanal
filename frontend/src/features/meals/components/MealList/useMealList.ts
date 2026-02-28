@@ -1,18 +1,19 @@
 import { useState, useMemo } from 'react';
 import { Meal, MealType } from '@/types';
-import { useAuth } from '@/features/auth/context/AuthContext';
+import { useAuthStore } from '@/features/auth/store/useAuthStore';
+import { useUIStore } from '@/store/useUIStore';
 
 interface UseMealListProps {
     meals: Meal[];
-    onLoginClick: () => void;
 }
 
-export const useMealList = ({ meals, onLoginClick }: UseMealListProps) => {
+export const useMealList = ({ meals }: UseMealListProps) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [activeFilters, setActiveFilters] = useState<MealType[]>([]);
     const [isAddModalOpen, setAddModalOpen] = useState(false);
 
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated } = useAuthStore();
+    const { openLogin } = useUIStore();
 
     const handleFilterChange = (type: MealType) => {
         setActiveFilters(prev =>
@@ -24,7 +25,7 @@ export const useMealList = ({ meals, onLoginClick }: UseMealListProps) => {
         if (isAuthenticated) {
             setAddModalOpen(true);
         } else {
-            onLoginClick();
+            openLogin();
         }
     };
 

@@ -4,11 +4,7 @@ import { useRecipesCatalog } from './useRecipesCatalog';
 import CatalogCard from './CatalogCard';
 import { MEAL_TYPES } from '@/utils/constants';
 
-interface RecipesCatalogProps {
-    onLoginClick: () => void;
-}
-
-const RecipesCatalog = ({ onLoginClick }: RecipesCatalogProps) => {
+const RecipesCatalog = () => {
     const navigate = useNavigate();
     const {
         filteredMeals,
@@ -18,7 +14,7 @@ const RecipesCatalog = ({ onLoginClick }: RecipesCatalogProps) => {
         activeFilter,
         setActiveFilter,
         isAuthenticated
-    } = useRecipesCatalog({ onLoginClick });
+    } = useRecipesCatalog();
 
     return (
         <div className="flex flex-1 overflow-hidden bg-[#f8f9fc] dark:bg-[#0c0a18]">

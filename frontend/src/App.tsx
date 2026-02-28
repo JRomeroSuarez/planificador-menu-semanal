@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from '@/features/auth/context/AuthContext';
+import { useUIStore } from '@/store/useUIStore';
 import Header from '@/layouts/Header';
 import LoginModal from '@/features/auth/components/LoginModal';
 import RegisterModal from '@/features/auth/components/RegisterModal';
@@ -7,32 +7,24 @@ import PlannerView from '@/features/planner/components/PlannerView';
 import RecipesCatalog from '@/features/meals/components/RecipesCatalog';
 import RecipeDetail from '@/features/meals/components/RecipeDetail';
 import AddRecipePage from '@/features/meals/components/AddRecipePage';
-import { useAppModals } from '@/hooks/useAppModals';
 
 const AppContent = () => {
     const {
         isLoginModalOpen,
         isRegisterModalOpen,
-        isShoppingListOpen,
         openLogin,
         openRegister,
-        openShoppingList,
         closeLogin,
         closeRegister,
-        closeShoppingList
-    } = useAppModals();
+    } = useUIStore();
 
     return (
         <div className="flex flex-col min-h-screen">
-            <Header
-                onLoginClick={openLogin}
-                onRegisterClick={openRegister}
-                onShoppingListClick={openShoppingList}
-            />
+            <Header />
 
             <Routes>
-                <Route path="/" element={<PlannerView onLoginClick={openLogin} />} />
-                <Route path="/recetas" element={<RecipesCatalog onLoginClick={openLogin} />} />
+                <Route path="/" element={<PlannerView />} />
+                <Route path="/recetas" element={<RecipesCatalog />} />
                 <Route path="/recetas/nueva" element={<AddRecipePage />} />
                 <Route path="/recetas/editar/:id" element={<AddRecipePage />} />
                 <Route path="/recetas/:id" element={<RecipeDetail />} />
@@ -59,9 +51,7 @@ const AppContent = () => {
 const App = () => {
     return (
         <BrowserRouter>
-            <AuthProvider>
-                <AppContent />
-            </AuthProvider>
+            <AppContent />
         </BrowserRouter>
     );
 };

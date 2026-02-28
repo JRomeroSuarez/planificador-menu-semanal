@@ -1,14 +1,10 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Meal, MealType } from '@/types';
 import * as mealService from '@/features/meals/api/mealService';
-import { useAuth } from '@/features/auth/context/AuthContext';
+import { useAuthStore } from '@/features/auth/store/useAuthStore';
 
-interface UseRecipesCatalogProps {
-    onLoginClick: () => void;
-}
-
-export const useRecipesCatalog = ({ onLoginClick }: UseRecipesCatalogProps) => {
-    const { user, isAuthenticated } = useAuth();
+export const useRecipesCatalog = () => {
+    const { user, isAuthenticated } = useAuthStore();
     const [meals, setMeals] = useState<Meal[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
