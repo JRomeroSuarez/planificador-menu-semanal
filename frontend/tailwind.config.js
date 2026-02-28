@@ -9,17 +9,37 @@ export default {
     ],
     theme: {
         extend: {
-            colors: {
-                "primary": "#3713ec",
-                "background-light": "#f6f6f8",
-                "background-dark": "#131022",
-            },
             fontFamily: {
                 "display": ["Work Sans", "sans-serif"],
-                "sans": ["Work Sans", "sans-serif"]
+                "sans": ["Inter", "sans-serif"]
             },
         },
     },
     darkMode: "class",
-    plugins: [heroui()],
+    plugins: [
+        heroui({
+            themes: {
+                light: {
+                    colors: {
+                        background: "#f9fafb",
+                        foreground: "#0f172a",
+                        primary: {
+                            DEFAULT: "#3713ec",
+                            foreground: "#ffffff",
+                        },
+                    },
+                },
+                dark: {
+                    colors: {
+                        background: "#131022",
+                        foreground: "#ffffff",
+                        primary: {
+                            DEFAULT: "#3713ec",
+                            foreground: "#ffffff",
+                        },
+                    },
+                },
+            },
+        }),
+    ],
 };
