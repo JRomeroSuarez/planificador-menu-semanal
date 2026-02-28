@@ -7,10 +7,8 @@
 @layer base {
     :root {
         --primary: 61, 38, 252;
-        --hero-primary: #3d26fc;
+        --hero-primary: #3713ec;
     }
-
-
 
     h1,
     h2,
@@ -20,11 +18,19 @@
     h6,
     .display-font {
         font-family: 'Work Sans', sans-serif !important;
-        @apply tracking-tight font-extrabold;
+        letter-spacing: -0.025em;
+        font-weight: 800;
     }
 
     body {
-        @apply bg-[#f9fafb] text-slate-900 antialiased;
+        margin: 0;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+            'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+            sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background-color: #f9fafb;
+        color: #0f172a;
         min-height: 100vh;
     }
 }

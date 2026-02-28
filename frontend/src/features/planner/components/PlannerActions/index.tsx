@@ -25,7 +25,7 @@ const PlannerActions = ({ onSave, onLoad, onPrint, onOpenShoppingList, shoppingL
                             className="font-bold text-xs"
                             startContent={<span className="material-symbols-outlined text-[18px]">shopping_cart</span>}
                         >
-                            Lista de compra ({shoppingListCount})
+                            Lista de compra
                         </Button>
                     </Badge>
                 </Tooltip>
