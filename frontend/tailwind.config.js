@@ -1,16 +1,13 @@
 import { heroui } from "@heroui/react";
-import path from "path";
-import { createRequire } from "module";
-
-const require = createRequire(import.meta.url);
-const heroUIThemePath = path.dirname(require.resolve("@heroui/theme/package.json"));
 
 /** @type {import('tailwindcss').Config} */
 export default {
     content: [
         "./index.html",
         "./src/**/*.{js,ts,jsx,tsx}",
-        `${heroUIThemePath}/dist/**/*.{js,ts,jsx,tsx}`,
+        "./node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx,mjs}",
+        "../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx,mjs}",
+        "../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx,mjs}",
     ],
     theme: {
         extend: {
