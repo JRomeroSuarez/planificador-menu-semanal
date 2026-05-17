@@ -6,32 +6,31 @@ import * as authService from '@/features/auth/api/authService';
 interface AuthState {
     isAuthenticated: boolean;
     user: User | null;
+    token: string | null;
     login: (username: string, password: string) => Promise<void>;
     logout: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
     persist(
-        (set, get) => ({
+        (set) => ({
             user: null,
+            token: null,
             isAuthenticated: false,
             login: async (username, password) => {
-                const userData = await authService.login(username, password);
-                set({ user: userData, isAuthenticated: true });
+                const { user, token } = await authService.login(username, password);
+                set({ user, token, isAuthenticated: true });
             },
             logout: () => {
-                set({ user: null, isAuthenticated: false });
+                set({ user: null, token: null, isAuthenticated: false });
             },
         }),
         {
             name: 'auth-storage',
-            onRehydrateStorage: (state) => {
-                return (rehydratedState) => {
-                    if (rehydratedState) {
-                        // Update isAuthenticated based on rehydrated user
-                        rehydratedState.isAuthenticated = !!rehydratedState.user;
-                    }
-                };
+            onRehydrateStorage: () => (rehydratedState) => {
+                if (rehydratedState) {
+                    rehydratedState.isAuthenticated = !!rehydratedState.token;
+                }
             },
         }
     )

@@ -1,29 +1,18 @@
-import { Router, Request, Response } from 'express';
+import { Router, Response } from 'express';
 import { prisma } from '../index';
+import { authenticate, AuthenticatedRequest } from '../middleware/auth';
 
 const router = Router();
 
-// Get weekly plan for a user
-router.get('/', async (req: Request, res: Response) => {
+router.get('/', authenticate, async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const { userId } = req.query;
-
-        if (!userId) {
-            return res.status(401).json({ error: 'Usuario no autenticado' });
-        }
-
         const planEntries = await prisma.weeklyPlanEntry.findMany({
-            where: { userId: Number(userId) },
+            where: { userId: req.userId },
             include: {
-                recipe: {
-                    include: {
-                        ingredients: true
-                    }
-                }
+                recipe: { include: { ingredients: true } }
             }
         });
 
-        // Transform to frontend format
         const weeklyPlan: any = {
             Lunes: { lunch: [], dinner: [] },
             Martes: { lunch: [], dinner: [] },
@@ -35,7 +24,7 @@ router.get('/', async (req: Request, res: Response) => {
         };
 
         planEntries.forEach(entry => {
-            const formattedRecipe = {
+            const recipe = {
                 id: entry.recipe.id,
                 name: entry.recipe.name,
                 type: entry.recipe.type.split(','),
@@ -44,12 +33,7 @@ router.get('/', async (req: Request, res: Response) => {
                     quantity: ing.quantity
                 }))
             };
-
-            if (entry.slot === 'lunch') {
-                weeklyPlan[entry.day].lunch.push(formattedRecipe);
-            } else {
-                weeklyPlan[entry.day].dinner.push(formattedRecipe);
-            }
+            weeklyPlan[entry.day][entry.slot as 'lunch' | 'dinner'].push(recipe);
         });
 
         res.json(weeklyPlan);
@@ -59,24 +43,40 @@ router.get('/', async (req: Request, res: Response) => {
     }
 });
 
-// Add recipe to weekly plan
-router.post('/', async (req: Request, res: Response) => {
+// Guarda el plan completo reemplazando todas las entradas del usuario
+router.post('/sync', authenticate, async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const { userId, day, slot, recipeId } = req.body;
+        const { plan } = req.body; // { Lunes: { lunch: [{ id }], dinner: [{ id }] }, ... }
 
-        if (!userId) {
-            return res.status(401).json({ error: 'Usuario no autenticado' });
+        await prisma.weeklyPlanEntry.deleteMany({ where: { userId: req.userId } });
+
+        const entries: { userId: number; day: string; slot: string; recipeId: number }[] = [];
+        for (const [day, slots] of Object.entries(plan as Record<string, { lunch: any[]; dinner: any[] }>)) {
+            for (const meal of slots.lunch) {
+                entries.push({ userId: req.userId!, day, slot: 'lunch', recipeId: meal.id });
+            }
+            for (const meal of slots.dinner) {
+                entries.push({ userId: req.userId!, day, slot: 'dinner', recipeId: meal.id });
+            }
         }
 
-        const entry = await prisma.weeklyPlanEntry.create({
-            data: {
-                userId: Number(userId),
-                day,
-                slot,
-                recipeId: Number(recipeId)
-            }
-        });
+        if (entries.length > 0) {
+            await prisma.weeklyPlanEntry.createMany({ data: entries });
+        }
 
+        res.json({ message: 'Plan sincronizado' });
+    } catch (error) {
+        console.error('Error sincronizando plan:', error);
+        res.status(500).json({ error: 'Error al sincronizar plan' });
+    }
+});
+
+router.post('/', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+    try {
+        const { day, slot, recipeId } = req.body;
+        const entry = await prisma.weeklyPlanEntry.create({
+            data: { userId: req.userId!, day, slot, recipeId: Number(recipeId) }
+        });
         res.status(201).json(entry);
     } catch (error) {
         console.error('Error añadiendo receta al plan:', error);
@@ -84,24 +84,12 @@ router.post('/', async (req: Request, res: Response) => {
     }
 });
 
-// Remove recipe from weekly plan
-router.delete('/', async (req: Request, res: Response) => {
+router.delete('/', authenticate, async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const { userId, day, slot, recipeId } = req.body;
-
-        if (!userId) {
-            return res.status(401).json({ error: 'Usuario no autenticado' });
-        }
-
+        const { day, slot, recipeId } = req.body;
         await prisma.weeklyPlanEntry.deleteMany({
-            where: {
-                userId: Number(userId),
-                day,
-                slot,
-                recipeId: Number(recipeId)
-            }
+            where: { userId: req.userId, day, slot, recipeId: Number(recipeId) }
         });
-
         res.json({ message: 'Receta eliminada del plan' });
     } catch (error) {
         console.error('Error eliminando receta del plan:', error);

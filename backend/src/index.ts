@@ -5,21 +5,33 @@ import { PrismaClient } from '@prisma/client';
 import authRoutes from './routes/auth';
 import recipesRoutes from './routes/recipes';
 import plansRoutes from './routes/plans';
+import uploadsRoutes from './routes/uploads';
 
 const app = express();
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3001;
 
-// Basic check for environment variables in production
-if (process.env.NODE_ENV === 'production' && !process.env.DATABASE_URL) {
-    console.error('❌ CRITICAL ERROR: DATABASE_URL is not defined in environment variables!');
-} else if (process.env.DATABASE_URL) {
-    console.log('✅ DATABASE_URL is defined');
+if (process.env.NODE_ENV === 'production') {
+    if (!process.env.DATABASE_URL) {
+        console.error('❌ CRITICAL ERROR: DATABASE_URL is not defined!');
+    }
+    if (!process.env.JWT_SECRET) {
+        console.error('❌ CRITICAL ERROR: JWT_SECRET is not defined!');
+    }
 }
 
-// Middleware
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(',')
+    : ['http://localhost:3000', 'http://localhost:5173'];
+
 app.use(cors({
-    origin: '*',
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('No permitido por CORS'));
+        }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
@@ -27,23 +39,20 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Global Error logging middleware to help debug 500s in Vercel
-app.use((req, res, next) => {
+app.use((req, _res, next) => {
     console.log(`${req.method} ${req.url}`);
     next();
 });
 
-// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/recipes', recipesRoutes);
 app.use('/api/plans', plansRoutes);
+app.use('/api/uploads', uploadsRoutes);
 
-// Health check
-app.get('/api/health', (req, res) => {
+app.get('/api/health', (_req, res) => {
     res.json({ status: 'ok', message: 'Backend is running!' });
 });
 
-// Start server
 if (process.env.NODE_ENV !== 'production') {
     app.listen(PORT, () => {
         console.log(`🚀 Server running on http://localhost:${PORT}`);

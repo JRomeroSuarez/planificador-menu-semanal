@@ -12,7 +12,7 @@ export const useRecipesCatalog = () => {
 
     useEffect(() => {
         setIsLoading(true);
-        mealService.getMeals(user?.id)
+        mealService.getMeals()
             .then(data => setMeals(data))
             .catch(err => console.error(err))
             .finally(() => setIsLoading(false));

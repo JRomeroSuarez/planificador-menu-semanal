@@ -83,10 +83,10 @@ export const useAddRecipePage = () => {
             };
 
             if (isEditing) {
-                await mealService.updateMeal(Number(id), Number(user.id), mealData);
+                await mealService.updateMeal(Number(id), mealData);
                 alert('¡Receta actualizada con éxito!');
             } else {
-                await mealService.addMeal(Number(user.id), mealData);
+                await mealService.addMeal(mealData);
                 alert('¡Receta guardada con éxito!');
             }
             navigate('/recetas');

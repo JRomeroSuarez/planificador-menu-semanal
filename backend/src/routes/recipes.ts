@@ -1,98 +1,67 @@
-import { Router, Request, Response } from 'express';
+import { Router, Response } from 'express';
 import { prisma } from '../index';
+import { authenticate, AuthenticatedRequest } from '../middleware/auth';
 
 const router = Router();
 
-// Get all recipes for a user (or public recipes if not authenticated)
-router.get('/', async (req: Request, res: Response) => {
+const formatRecipe = (recipe: any) => ({
+    id: recipe.id,
+    name: recipe.name,
+    type: recipe.type.split(','),
+    prepTime: recipe.prepTime,
+    servings: recipe.servings,
+    instructions: recipe.instructions,
+    imageUrl: recipe.imageUrl ?? null,
+    ingredients: recipe.ingredients.map((ing: any) => ({
+        name: ing.name,
+        quantity: ing.quantity
+    }))
+});
+
+router.get('/', authenticate, async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const { userId } = req.query;
-
         const recipes = await prisma.recipe.findMany({
-            where: userId ? { ownerId: Number(userId) } : undefined,
-            include: {
-                ingredients: true
-            }
+            where: { ownerId: req.userId },
+            include: { ingredients: true }
         });
-
-        // Transform to match frontend format
-        const formattedRecipes = recipes.map(recipe => ({
-            id: recipe.id,
-            name: recipe.name,
-            type: recipe.type.split(','), // Convert comma-separated to array
-            prepTime: recipe.prepTime,
-            servings: recipe.servings,
-            instructions: recipe.instructions,
-            ingredients: recipe.ingredients.map(ing => ({
-                name: ing.name,
-                quantity: ing.quantity
-            }))
-        }));
-
-        res.json(formattedRecipes);
+        res.json(recipes.map(formatRecipe));
     } catch (error: any) {
         console.error('Error obteniendo recetas:', error);
-        res.status(500).json({
-            error: 'Error al obtener recetas',
-            message: error.message,
-            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
-        });
+        res.status(500).json({ error: 'Error al obtener recetas' });
     }
 });
 
-// Get recipe by ID
-router.get('/:id', async (req: Request, res: Response) => {
+router.get('/:id', authenticate, async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const { id } = req.params;
-
         const recipe = await prisma.recipe.findUnique({
-            where: { id: Number(id) },
-            include: {
-                ingredients: true
-            }
+            where: { id: Number(req.params.id) },
+            include: { ingredients: true }
         });
 
-        if (!recipe) {
+        if (!recipe || recipe.ownerId !== req.userId) {
             return res.status(404).json({ error: 'Receta no encontrada' });
         }
 
-        const formattedRecipe = {
-            id: recipe.id,
-            name: recipe.name,
-            type: recipe.type.split(','),
-            prepTime: recipe.prepTime,
-            servings: recipe.servings,
-            instructions: recipe.instructions,
-            ingredients: recipe.ingredients.map(ing => ({
-                name: ing.name,
-                quantity: ing.quantity
-            }))
-        };
-
-        res.json(formattedRecipe);
+        res.json(formatRecipe(recipe));
     } catch (error) {
         console.error('Error obteniendo receta:', error);
         res.status(500).json({ error: 'Error al obtener receta' });
     }
 });
 
-// Create new recipe
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', authenticate, async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const { name, type, ingredients, userId, prepTime, servings, instructions } = req.body;
-
-        if (!userId) {
-            return res.status(401).json({ error: 'Usuario no autenticado' });
-        }
+        const { name, type, ingredients, prepTime, servings, instructions, imageUrl } = req.body;
 
         const recipe = await prisma.recipe.create({
             data: {
                 name,
-                type: type.join(','), // Convert array to comma-separated string
-                ownerId: Number(userId),
+                type: Array.isArray(type) ? type.join(',') : type,
+                ownerId: req.userId!,
                 prepTime: prepTime ? Number(prepTime) : undefined,
                 servings: servings ? Number(servings) : undefined,
                 instructions,
+                imageUrl: imageUrl ?? null,
                 ingredients: {
                     create: ingredients.map((ing: { name: string; quantity: string }) => ({
                         name: ing.name,
@@ -100,72 +69,35 @@ router.post('/', async (req: Request, res: Response) => {
                     }))
                 }
             },
-            include: {
-                ingredients: true
-            }
+            include: { ingredients: true }
         });
 
-        const formattedRecipe = {
-            id: recipe.id,
-            name: recipe.name,
-            type: recipe.type.split(','),
-            prepTime: recipe.prepTime,
-            servings: recipe.servings,
-            instructions: recipe.instructions,
-            ingredients: recipe.ingredients.map(ing => ({
-                name: ing.name,
-                quantity: ing.quantity
-            }))
-        };
-
-        res.status(201).json(formattedRecipe);
+        res.status(201).json(formatRecipe(recipe));
     } catch (error) {
         console.error('Error creando receta:', error);
         res.status(500).json({ error: 'Error al crear receta' });
     }
 });
 
-// Delete recipe
-router.delete('/:id', async (req: Request, res: Response) => {
+router.put('/:id', authenticate, async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const { id } = req.params;
+        const { name, type, ingredients, prepTime, servings, instructions, imageUrl } = req.body;
+        const recipeId = Number(req.params.id);
 
-        // Delete ingredients first (cascade)
-        await prisma.ingredient.deleteMany({
-            where: { recipeId: Number(id) }
-        });
-
-        // Delete recipe
-        await prisma.recipe.delete({
-            where: { id: Number(id) }
-        });
-
-        res.json({ message: 'Receta eliminada exitosamente' });
-    } catch (error) {
-        console.error('Error eliminando receta:', error);
-        res.status(500).json({ error: 'Error al eliminar receta' });
-    }
-});
-
-// Update recipe
-router.put('/:id', async (req: Request, res: Response) => {
-    try {
-        const { id } = req.params;
-        const { name, type, ingredients, userId, prepTime, servings, instructions } = req.body;
-
-        if (!userId) {
-            return res.status(401).json({ error: 'Usuario no autenticado' });
+        const existing = await prisma.recipe.findUnique({ where: { id: recipeId } });
+        if (!existing || existing.ownerId !== req.userId) {
+            return res.status(404).json({ error: 'Receta no encontrada' });
         }
 
         const recipe = await prisma.recipe.update({
-            where: { id: Number(id) },
+            where: { id: recipeId },
             data: {
                 name,
-                type: type.join(','),
-                ownerId: Number(userId),
+                type: Array.isArray(type) ? type.join(',') : type,
                 prepTime: prepTime ? Number(prepTime) : undefined,
                 servings: servings ? Number(servings) : undefined,
                 instructions,
+                imageUrl: imageUrl ?? null,
                 ingredients: {
                     deleteMany: {},
                     create: ingredients.map((ing: { name: string; quantity: string }) => ({
@@ -174,28 +106,32 @@ router.put('/:id', async (req: Request, res: Response) => {
                     }))
                 }
             },
-            include: {
-                ingredients: true
-            }
+            include: { ingredients: true }
         });
 
-        const formattedRecipe = {
-            id: recipe.id,
-            name: recipe.name,
-            type: recipe.type.split(','),
-            prepTime: recipe.prepTime,
-            servings: recipe.servings,
-            instructions: recipe.instructions,
-            ingredients: recipe.ingredients.map(ing => ({
-                name: ing.name,
-                quantity: ing.quantity
-            }))
-        };
-
-        res.status(201).json(formattedRecipe);
+        res.json(formatRecipe(recipe));
     } catch (error) {
         console.error('Error actualizando receta:', error);
         res.status(500).json({ error: 'Error al actualizar receta' });
+    }
+});
+
+router.delete('/:id', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+    try {
+        const recipeId = Number(req.params.id);
+
+        const existing = await prisma.recipe.findUnique({ where: { id: recipeId } });
+        if (!existing || existing.ownerId !== req.userId) {
+            return res.status(404).json({ error: 'Receta no encontrada' });
+        }
+
+        await prisma.ingredient.deleteMany({ where: { recipeId } });
+        await prisma.recipe.delete({ where: { id: recipeId } });
+
+        res.json({ message: 'Receta eliminada exitosamente' });
+    } catch (error) {
+        console.error('Error eliminando receta:', error);
+        res.status(500).json({ error: 'Error al eliminar receta' });
     }
 });
 

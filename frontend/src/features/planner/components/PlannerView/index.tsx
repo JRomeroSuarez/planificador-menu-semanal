@@ -13,6 +13,7 @@ const PlannerView = () => {
     const {
         meals,
         isLoadingMeals,
+        isSyncing,
         weeklyPlan,
         manualIngredients,
         activeMeal,
@@ -24,8 +25,6 @@ const PlannerView = () => {
         addManualIngredient,
         removeManualIngredient,
         removeDerivedIngredient,
-        savePlan,
-        loadPlan,
         handlePrint
     } = usePlanner();
     return (
@@ -44,11 +43,10 @@ const PlannerView = () => {
                 {/* Main Content: Weekly Planner */}
                 <section className="flex-1 flex flex-col bg-[#f8f9fc] dark:bg-[#0c0a18] p-8 overflow-y-auto">
                     <PlannerActions
-                        onSave={savePlan}
-                        onLoad={loadPlan}
                         onPrint={handlePrint}
                         onOpenShoppingList={onOpen}
                         shoppingListCount={derivedShoppingList.length + manualIngredients.length}
+                        isSyncing={isSyncing}
                     />
 
                     <PlannerGrid

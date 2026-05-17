@@ -21,6 +21,7 @@ export interface Meal {
     prepTime?: number;
     servings?: number;
     instructions?: string;
+    imageUrl?: string | null;
 }
 
 export interface WeeklyPlan {

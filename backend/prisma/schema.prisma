@@ -29,6 +29,7 @@ model Recipe {
   prepTime     Int?
   servings     Int?
   instructions String?
+  imageUrl     String?
 }
 
 model Ingredient {

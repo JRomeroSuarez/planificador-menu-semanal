@@ -1,10 +1,11 @@
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import { Meal, WeeklyPlan, Ingredient } from '@/types';
 import { DAYS_OF_WEEK } from '@/utils/constants';
 import { useAuthStore } from '@/features/auth/store/useAuthStore';
 import { useUIStore } from '@/store/useUIStore';
 import * as mealService from '@/features/meals/api/mealService';
+import * as planService from '@/features/planner/api/planService';
 import { useShoppingListStore } from '@/features/shopping/store/useShoppingListStore';
 
 const initialWeeklyPlan: WeeklyPlan = DAYS_OF_WEEK.reduce((acc: WeeklyPlan, day: string) => ({
@@ -13,7 +14,7 @@ const initialWeeklyPlan: WeeklyPlan = DAYS_OF_WEEK.reduce((acc: WeeklyPlan, day:
 }), {});
 
 export const usePlanner = () => {
-    const { user } = useAuthStore();
+    const { user, isAuthenticated } = useAuthStore();
     const { openLogin } = useUIStore();
     const [meals, setMeals] = useState<Meal[]>([]);
     const [isLoadingMeals, setIsLoadingMeals] = useState(true);
@@ -21,26 +22,59 @@ export const usePlanner = () => {
     const [manualIngredients, setManualIngredients] = useState<Ingredient[]>([]);
     const [ignoredIngredients, setIgnoredIngredients] = useState<string[]>([]);
     const [activeMeal, setActiveMeal] = useState<Meal | null>(null);
+    const [isSyncing, setIsSyncing] = useState(false);
     const addItem = useShoppingListStore(state => state.addItem);
+    const syncTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const isFirstLoad = useRef(true);
 
     useEffect(() => {
-        setIsLoadingMeals(true);
-        mealService.getMeals(user?.id)
-            .then((userMeals: Meal[]) => {
-                setMeals(userMeals);
-            })
-            .catch((error: Error) => console.error("Failed to load meals:", error))
-            .finally(() => setIsLoadingMeals(false));
+        if (!isAuthenticated) return;
 
-        // Load persisted shopping list data
+        isFirstLoad.current = true;
+        setIsLoadingMeals(true);
+        Promise.all([
+            mealService.getMeals(),
+            planService.getPlan(),
+        ])
+            .then(([userMeals, savedPlan]) => {
+                setMeals(userMeals);
+                setWeeklyPlan(savedPlan);
+            })
+            .catch((error: Error) => console.error('Failed to load data:', error))
+            .finally(() => {
+                setIsLoadingMeals(false);
+                // Espera un tick para que setWeeklyPlan haya hecho render antes de activar el auto-save
+                setTimeout(() => { isFirstLoad.current = false; }, 0);
+            });
+
         const savedManual = localStorage.getItem('manualIngredients');
         if (savedManual) setManualIngredients(JSON.parse(savedManual));
 
         const savedIgnored = localStorage.getItem('ignoredIngredients');
         if (savedIgnored) setIgnoredIngredients(JSON.parse(savedIgnored));
-    }, [user]);
+    }, [user, isAuthenticated]);
 
-    // Persist changes
+    // Auto-save con debounce de 1s tras cada cambio en el plan
+    useEffect(() => {
+        if (isFirstLoad.current || !isAuthenticated) return;
+
+        if (syncTimeoutRef.current) clearTimeout(syncTimeoutRef.current);
+        syncTimeoutRef.current = setTimeout(async () => {
+            setIsSyncing(true);
+            try {
+                await planService.syncPlan(weeklyPlan);
+            } catch (err) {
+                console.error('Error al sincronizar plan:', err);
+            } finally {
+                setIsSyncing(false);
+            }
+        }, 1000);
+
+        return () => {
+            if (syncTimeoutRef.current) clearTimeout(syncTimeoutRef.current);
+        };
+    }, [weeklyPlan, isAuthenticated]);
+
     useEffect(() => {
         localStorage.setItem('manualIngredients', JSON.stringify(manualIngredients));
     }, [manualIngredients]);
@@ -58,11 +92,11 @@ export const usePlanner = () => {
             return;
         }
         try {
-            const newMeal = await mealService.addMeal(Number(user.id), mealData);
+            const newMeal = await mealService.addMeal(mealData);
             setMeals(prev => [...prev, newMeal]);
         } catch (error) {
-            console.error("Failed to add meal:", error);
-            alert("Hubo un error al añadir la comida.");
+            console.error('Failed to add meal:', error);
+            alert('Hubo un error al añadir la comida.');
         }
     };
 
@@ -106,22 +140,18 @@ export const usePlanner = () => {
             meal.ingredients.forEach(ingredient => {
                 const name = ingredient.name.toLowerCase().trim();
                 const quantity = ingredient.quantity.trim();
-                if (!ingredientsMap.has(name)) {
-                    ingredientsMap.set(name, []);
-                }
+                if (!ingredientsMap.has(name)) ingredientsMap.set(name, []);
                 ingredientsMap.get(name)!.push(quantity);
             });
         });
 
-        const derivedShoppingList = Array.from(ingredientsMap.entries())
+        return Array.from(ingredientsMap.entries())
             .map(([name, quantities]) => ({
-                name: name ? name.charAt(0).toUpperCase() + name.slice(1) : "Sin nombre",
+                name: name ? name.charAt(0).toUpperCase() + name.slice(1) : 'Sin nombre',
                 quantities,
             }))
             .filter(ing => !ignoredIngredients.includes(ing.name.toLowerCase()))
             .sort((a, b) => a.name.localeCompare(b.name));
-
-        return derivedShoppingList;
     }, [weeklyPlan, ignoredIngredients]);
 
     const addManualIngredient = (ingredient: Ingredient) => {
@@ -136,28 +166,12 @@ export const usePlanner = () => {
         setIgnoredIngredients(prev => [...prev, name.toLowerCase()]);
     };
 
-    const savePlan = () => {
-        localStorage.setItem('weeklyMealPlan', JSON.stringify(weeklyPlan));
-        alert('¡Plan guardado con éxito!');
-    };
-
-    const loadPlan = () => {
-        const savedPlan = localStorage.getItem('weeklyMealPlan');
-        if (savedPlan) {
-            setWeeklyPlan(JSON.parse(savedPlan) as WeeklyPlan);
-            alert('¡Plan cargado correctamente!');
-        } else {
-            alert('No se encontró ningún plan guardado.');
-        }
-    };
-
-    const handlePrint = () => {
-        window.print();
-    };
+    const handlePrint = () => window.print();
 
     return {
         meals,
         isLoadingMeals,
+        isSyncing,
         weeklyPlan,
         manualIngredients,
         activeMeal,
@@ -169,8 +183,6 @@ export const usePlanner = () => {
         addManualIngredient,
         removeManualIngredient,
         removeDerivedIngredient,
-        savePlan,
-        loadPlan,
         handlePrint
     };
 };

@@ -1,33 +1,32 @@
 import { User } from '@/types';
+import { apiFetch } from '@/lib/api';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
-
-export const login = async (username: string, password: string): Promise<User> => {
-    const response = await fetch(`${API_URL}/auth/login`, {
+export const login = async (username: string, password: string): Promise<{ user: User; token: string }> => {
+    const response = await apiFetch('/auth/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        skipAuth: true,
         body: JSON.stringify({ username, password })
     });
 
     if (!response.ok) {
-        throw new Error('Error en login');
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || 'Error en login');
     }
 
-    const data = await response.json();
-    return data.user;
+    return response.json();
 };
 
-export const register = async (username: string, password: string): Promise<User> => {
-    const response = await fetch(`${API_URL}/auth/register`, {
+export const register = async (username: string, password: string): Promise<{ user: User; token: string }> => {
+    const response = await apiFetch('/auth/register', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        skipAuth: true,
         body: JSON.stringify({ username, password })
     });
 
     if (!response.ok) {
-        throw new Error('Error en registro');
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || 'Error en registro');
     }
 
-    const data = await response.json();
-    return data.user;
+    return response.json();
 };
