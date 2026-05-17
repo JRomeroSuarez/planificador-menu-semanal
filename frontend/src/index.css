@@ -5,6 +5,14 @@
 @tailwind utilities;
 
 @layer base {
+    @font-face {
+        font-family: 'Material Symbols Outlined';
+        font-style: normal;
+        font-weight: 400;
+        font-display: block;
+        src: url('./assets/fonts/MaterialSymbolsOutlined.ttf') format('truetype');
+    }
+
     :root {
         --primary: 61, 38, 252;
         --hero-primary: #3713ec;
@@ -46,6 +54,7 @@
         white-space: nowrap;
         word-wrap: normal;
         direction: ltr;
+        font-feature-settings: 'liga';
         -webkit-font-feature-settings: 'liga';
         -webkit-font-smoothing: antialiased;
     }
