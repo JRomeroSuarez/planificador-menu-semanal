@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# Monorepo: only the root package-lock.json is authoritative (npm workspaces)
+frontend/package-lock.json
+backend/package-lock.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
