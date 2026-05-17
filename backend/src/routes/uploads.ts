@@ -1,6 +1,5 @@
 import { Router, Response } from 'express';
 import multer from 'multer';
-import { put } from '@vercel/blob';
 import { authenticate, AuthenticatedRequest } from '../middleware/auth';
 
 const router = Router();
@@ -12,6 +11,11 @@ router.post('/image', authenticate, upload.single('image'), async (req: Authenti
             return res.status(400).json({ error: 'No se recibió ninguna imagen' });
         }
 
+        if (!process.env.BLOB_READ_WRITE_TOKEN) {
+            return res.status(503).json({ error: 'Subida de imágenes no configurada' });
+        }
+
+        const { put } = await import('@vercel/blob');
         const { url } = await put(
             `recipes/${req.userId}/${Date.now()}-${req.file.originalname}`,
             req.file.buffer,
