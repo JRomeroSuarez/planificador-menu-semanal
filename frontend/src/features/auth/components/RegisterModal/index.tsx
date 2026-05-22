@@ -5,9 +5,10 @@ interface RegisterModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSwitchToLogin: () => void;
+    onSuccess?: () => void;
 }
 
-const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps) => {
+const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, onSuccess }: RegisterModalProps) => {
     const {
         username,
         setUsername,
@@ -19,15 +20,15 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
         isLoading,
         isSuccess,
         handleSubmit
-    } = useRegisterModal({ isOpen });
+    } = useRegisterModal({ isOpen, onSuccess });
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} placement="center" backdrop="blur">
             <ModalContent>
                 {(onClose) => (
                     <>
-                        <ModalHeader className="flex flex-col gap-1">
-                            {isSuccess ? '¡Registro completado!' : 'Crear una Cuenta'}
+                        <ModalHeader className="flex flex-col gap-1 font-display font-semibold">
+                            {isSuccess ? '¡Cuenta creada!' : 'Crear cuenta'}
                         </ModalHeader>
                         <ModalBody>
                             {isSuccess ? (
@@ -42,7 +43,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
                             ) : (
                                 <div className="space-y-4">
                                     {error && (
-                                        <div className="p-3 text-xs bg-danger-50 text-danger rounded-xl font-bold uppercase tracking-tight">
+                                        <div className="p-3 text-sm bg-danger-50 text-danger rounded-xl font-medium">
                                             {error}
                                         </div>
                                     )}
@@ -71,7 +72,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
                                     />
                                     <div className="text-center text-sm">
                                         <span className="text-default-500">¿Ya tienes una cuenta? </span>
-                                        <Link className="cursor-pointer font-bold" size="sm" onPress={onSwitchToLogin}>
+                                        <Link className="cursor-pointer font-semibold text-terracotta" size="sm" onPress={onSwitchToLogin}>
                                             Inicia sesión
                                         </Link>
                                     </div>
@@ -80,21 +81,22 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
                         </ModalBody>
                         <ModalFooter>
                             {isSuccess ? (
-                                <Button color="primary" onPress={onSwitchToLogin} className="w-full font-bold">
-                                    Ir a Iniciar Sesión
+                                <Button color="primary" radius="full" onPress={onSwitchToLogin} className="w-full font-semibold">
+                                    Ir a iniciar sesión
                                 </Button>
                             ) : (
                                 <>
-                                    <Button variant="flat" color="danger" onPress={onClose}>
+                                    <Button variant="light" onPress={onClose} className="font-medium">
                                         Cancelar
                                     </Button>
                                     <Button
                                         color="primary"
+                                        radius="full"
                                         onPress={handleSubmit}
                                         isLoading={isLoading}
-                                        className="font-bold"
+                                        className="font-semibold px-6"
                                     >
-                                        Crear Cuenta
+                                        Crear cuenta
                                     </Button>
                                 </>
                             )}

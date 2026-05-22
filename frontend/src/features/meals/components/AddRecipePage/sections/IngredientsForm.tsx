@@ -10,13 +10,13 @@ interface IngredientsFormProps {
 
 const IngredientsForm = ({ ingredients, onAdd, onRemove, onChange }: IngredientsFormProps) => {
     return (
-        <section className="bg-white dark:bg-slate-900 border border-divider p-8 rounded-[2rem] shadow-sm">
+        <section className="bg-white dark:bg-white/[0.04] border border-[#EFE8D8] dark:border-white/10 p-8 rounded-[2rem] shadow-card">
             <div className="flex justify-between items-center mb-8">
                 <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
-                        <span className="material-symbols-outlined text-lg font-bold">list_alt</span>
+                    <div className="w-8 h-8 bg-terracotta/10 rounded-xl flex items-center justify-center text-terracotta">
+                        <span className="material-symbols-outlined text-[18px]">list_alt</span>
                     </div>
-                    <h3 className="text-lg font-black uppercase tracking-tight">Ingredientes</h3>
+                    <h3 className="font-display text-lg font-semibold text-ink dark:text-cream">Ingredientes</h3>
                 </div>
             </div>
 
@@ -52,11 +52,11 @@ const IngredientsForm = ({ ingredients, onAdd, onRemove, onChange }: Ingredients
                 <Button
                     fullWidth
                     variant="flat"
-                    className="mt-4 font-black border-2 border-dashed border-default-200 h-12 rounded-2xl text-default-500 hover:text-primary hover:border-primary transition-all"
+                    className="mt-4 font-semibold border-2 border-dashed border-[#D8CDB6] dark:border-white/15 h-12 rounded-2xl text-ink/50 dark:text-cream/50 hover:text-terracotta hover:border-terracotta transition-all"
                     onPress={onAdd}
                     startContent={<span className="material-symbols-outlined">add</span>}
                 >
-                    Añadir Ingrediente
+                    Añadir ingrediente
                 </Button>
             </div>
         </section>

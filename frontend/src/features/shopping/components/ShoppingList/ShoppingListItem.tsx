@@ -18,8 +18,8 @@ const ShoppingListItem = ({ name, quantity, checked, onToggle, onRemove }: Shopp
                 color="primary"
             />
             <div className={`flex-1 transition-all ${checked ? 'opacity-40 line-through' : ''}`}>
-                <p className="text-xs text-foreground font-medium">{name}</p>
-                {quantity && <p className="text-[10px] text-default-400">{quantity}</p>}
+                <p className="text-sm text-ink/80 dark:text-cream/80 font-medium">{name}</p>
+                {quantity && <p className="text-[11px] text-ink/40 dark:text-cream/40">{quantity}</p>}
             </div>
             <Tooltip content="Eliminar" size="sm" color="danger" closeDelay={0}>
                 <Button

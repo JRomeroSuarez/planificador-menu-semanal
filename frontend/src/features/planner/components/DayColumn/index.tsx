@@ -1,5 +1,5 @@
 import { useDroppable } from '@dnd-kit/core';
-import { Card, CardBody, Button, Chip, Divider } from "@heroui/react";
+import { Card, CardBody, Button, Chip } from "@heroui/react";
 import { Meal } from '@/types';
 import { MealTypeColors } from '@/utils/constants';
 
@@ -18,22 +18,24 @@ const MealSlot = ({ day, mealTime, title, meals, onRemoveMeal }: MealSlotProps) 
 
     return (
         <div className={`
-            group relative min-h-[200px] rounded-3xl border-2 border-dashed p-4 flex flex-col transition-all shadow-sm
-            ${isOver ? 'border-primary bg-primary/5' : 'border-default-200 dark:border-white/10 bg-white/40 dark:bg-white/5 hover:border-primary/50'}
+            group relative min-h-[180px] rounded-3xl border-2 border-dashed p-4 flex flex-col transition-all
+            ${isOver ? 'border-terracotta bg-terracotta/5' : 'border-[#E2D7C0] dark:border-white/10 bg-white/50 dark:bg-white/[0.03] hover:border-terracotta/40'}
         `}>
-            <div className="flex justify-between items-center mb-4">
-                <span className="text-[11px] font-black text-default-500 uppercase tracking-widest">{title}</span>
-                <span className="material-symbols-outlined text-default-300 group-hover:text-primary text-[18px] cursor-pointer">more_horiz</span>
+            <div className="flex justify-between items-center mb-3">
+                <span className="text-xs font-semibold text-ink/45 dark:text-cream/45 flex items-center gap-1.5">
+                    <span className="material-symbols-outlined text-[15px]">{mealTime === 'lunch' ? 'wb_sunny' : 'bedtime'}</span>
+                    {title}
+                </span>
             </div>
 
             <div ref={(node: HTMLElement | null) => setNodeRef(node as any)} className="flex-1 flex flex-col gap-3">
                 {meals.map(meal => (
                     <Card
                         key={meal.id}
-                        className="border-none bg-white dark:bg-background-dark shadow-lg ring-1 ring-default-100 dark:ring-white/10"
+                        className="border border-[#EFE8D8] dark:border-white/10 bg-white dark:bg-white/[0.04] shadow-card"
                     >
                         <CardBody className="p-3 relative group/card">
-                            <h5 className="text-xs font-bold text-foreground leading-snug pr-7">{meal.name}</h5>
+                            <h5 className="text-[13px] font-semibold text-ink dark:text-cream leading-snug pr-7">{meal.name}</h5>
                             <div className="flex flex-wrap gap-1 mt-2">
                                 {meal.type.map(t => {
                                     const tagColors = MealTypeColors[t];
@@ -41,7 +43,7 @@ const MealSlot = ({ day, mealTime, title, meals, onRemoveMeal }: MealSlotProps) 
                                         <Chip
                                             key={t}
                                             size="sm"
-                                            className={`h-4 text-[8px] font-bold uppercase tracking-tighter ${tagColors.bg} ${tagColors.text}`}
+                                            className={`h-[18px] text-[9px] font-semibold ${tagColors.bg} ${tagColors.text}`}
                                             variant="flat"
                                         >
                                             {t}
@@ -54,7 +56,7 @@ const MealSlot = ({ day, mealTime, title, meals, onRemoveMeal }: MealSlotProps) 
                                 size="sm"
                                 variant="light"
                                 onPress={() => onRemoveMeal(day, mealTime, meal.id)}
-                                className="absolute top-1 right-1 opacity-0 group-hover/card:opacity-100 min-w-8 w-8 h-8 text-default-400 hover:text-danger"
+                                className="absolute top-1 right-1 opacity-0 group-hover/card:opacity-100 min-w-7 w-7 h-7 text-ink/30 hover:text-terracotta"
                             >
                                 <span className="material-symbols-outlined text-[16px]">close</span>
                             </Button>
@@ -63,9 +65,9 @@ const MealSlot = ({ day, mealTime, title, meals, onRemoveMeal }: MealSlotProps) 
                 ))}
 
                 {meals.length === 0 && (
-                    <div className="flex-1 flex flex-col items-center justify-center gap-2 text-default-400 group-hover:text-primary transition-colors py-4">
-                        <span className="material-symbols-outlined text-[32px] opacity-40">add_circle</span>
-                        <span className="text-[10px] font-bold uppercase tracking-widest">Plan Meal</span>
+                    <div className="flex-1 flex flex-col items-center justify-center gap-1.5 text-ink/30 dark:text-cream/30 group-hover:text-terracotta/60 transition-colors py-4">
+                        <span className="material-symbols-outlined text-[28px]">add</span>
+                        <span className="text-[11px] font-medium">Arrastra una receta</span>
                     </div>
                 )}
             </div>
@@ -84,15 +86,13 @@ const DayColumn = ({ day, meals, onRemoveMeal }: DayColumnProps) => {
     const dayName = day.split(' ')[0];
 
     return (
-        <div className="flex flex-col gap-6">
-            <Card className="border-none bg-primary/10 shadow-none py-2">
-                <CardBody className="py-0 flex items-center justify-center">
-                    <span className="text-xs font-black text-primary uppercase tracking-[0.3em]">{dayName}</span>
-                </CardBody>
-            </Card>
-            <div className="flex flex-col gap-6">
-                <MealSlot day={day} mealTime="lunch" title="Lunch" meals={meals.lunch} onRemoveMeal={onRemoveMeal} />
-                <MealSlot day={day} mealTime="dinner" title="Dinner" meals={meals.dinner} onRemoveMeal={onRemoveMeal} />
+        <div className="flex flex-col gap-5">
+            <div className="flex items-center justify-center py-2.5 rounded-2xl bg-terracotta/[0.08] dark:bg-terracotta/10">
+                <span className="font-display text-sm font-semibold text-terracotta">{dayName}</span>
+            </div>
+            <div className="flex flex-col gap-5">
+                <MealSlot day={day} mealTime="lunch" title="Comida" meals={meals.lunch} onRemoveMeal={onRemoveMeal} />
+                <MealSlot day={day} mealTime="dinner" title="Cena" meals={meals.dinner} onRemoveMeal={onRemoveMeal} />
             </div>
         </div>
     );

@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import * as authService from '@/features/auth/api/authService';
+import { useAuthStore } from '@/features/auth/store/useAuthStore';
 
 interface UseRegisterModalProps {
     isOpen: boolean;
+    onSuccess?: () => void;
 }
 
-export const useRegisterModal = ({ isOpen }: UseRegisterModalProps) => {
+export const useRegisterModal = ({ isOpen, onSuccess }: UseRegisterModalProps) => {
+    const { login } = useAuthStore();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -33,7 +36,8 @@ export const useRegisterModal = ({ isOpen }: UseRegisterModalProps) => {
         setIsLoading(true);
         try {
             await authService.register(username, password);
-            setIsSuccess(true);
+            await login(username, password);
+            onSuccess ? onSuccess() : setIsSuccess(true);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Ocurrió un error inesperado.');
         } finally {

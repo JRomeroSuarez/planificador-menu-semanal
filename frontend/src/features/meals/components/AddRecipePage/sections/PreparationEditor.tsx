@@ -7,17 +7,13 @@ interface PreparationEditorProps {
 
 const PreparationEditor = ({ instructions, setInstructions }: PreparationEditorProps) => {
     return (
-        <section className="bg-white dark:bg-slate-900 border border-divider p-8 rounded-[2rem] shadow-sm flex flex-col min-h-[500px]">
+        <section className="bg-white dark:bg-white/[0.04] border border-[#EFE8D8] dark:border-white/10 p-8 rounded-[2rem] shadow-card flex flex-col min-h-[500px]">
             <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
-                        <span className="material-symbols-outlined text-lg font-bold">skillet</span>
+                    <div className="w-8 h-8 bg-terracotta/10 rounded-xl flex items-center justify-center text-terracotta">
+                        <span className="material-symbols-outlined text-[18px]">skillet</span>
                     </div>
-                    <h3 className="text-lg font-black uppercase tracking-tight">Preparación</h3>
-                </div>
-                <div className="flex bg-default-100 p-1 rounded-xl">
-                    <Button size="sm" className="bg-white shadow-sm font-black text-[10px]">EDITOR</Button>
-                    <Button size="sm" variant="light" className="text-default-400 font-bold text-[10px]">MD</Button>
+                    <h3 className="font-display text-lg font-semibold text-ink dark:text-cream">Preparación</h3>
                 </div>
             </div>
 

@@ -31,7 +31,7 @@ const PlannerView = () => {
         <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
             <main className="flex flex-1 overflow-hidden relative">
                 {/* Left Sidebar: Recipe Library */}
-                <aside className="w-80 flex flex-col border-r border-[#f1f0f4] dark:border-white/10 bg-white dark:bg-background-dark overflow-y-auto shrink-0 transition-all no-print">
+                <aside className="hidden lg:flex w-80 flex-col border-r border-[#EAE1CE] dark:border-white/5 bg-white/60 dark:bg-white/[0.02] overflow-y-auto shrink-0 transition-all no-print">
                     <MealList
                         meals={meals}
                         addMeal={addMeal}
@@ -41,7 +41,7 @@ const PlannerView = () => {
                 </aside>
 
                 {/* Main Content: Weekly Planner */}
-                <section className="flex-1 flex flex-col bg-[#f8f9fc] dark:bg-[#0c0a18] p-8 overflow-y-auto">
+                <section className="flex-1 flex flex-col bg-cream dark:bg-[#211E1A] p-4 md:p-8 overflow-y-auto">
                     <PlannerActions
                         onPrint={handlePrint}
                         onOpenShoppingList={onOpen}
@@ -63,7 +63,7 @@ const PlannerView = () => {
                     size="sm"
                     backdrop="blur"
                     classNames={{
-                        base: "bg-white dark:bg-background-dark",
+                        base: "bg-white dark:bg-[#211E1A]",
                     }}
                 >
                     <DrawerContent>

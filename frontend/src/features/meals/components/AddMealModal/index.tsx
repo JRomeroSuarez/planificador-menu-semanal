@@ -25,7 +25,7 @@ const AddMealModal = ({ isOpen, onClose, onAddMeal }: AddMealModalProps) => {
             <ModalContent>
                 {(onClose) => (
                     <>
-                        <ModalHeader className="flex flex-col gap-1">Añadir Nueva Comida</ModalHeader>
+                        <ModalHeader className="flex flex-col gap-1 font-display font-semibold">Añadir comida</ModalHeader>
                         <ModalBody>
                             <div className="space-y-4">
                                 <Input
@@ -60,11 +60,11 @@ const AddMealModal = ({ isOpen, onClose, onAddMeal }: AddMealModalProps) => {
                             </div>
                         </ModalBody>
                         <ModalFooter>
-                            <Button variant="flat" color="danger" onPress={onClose}>
+                            <Button variant="light" onPress={onClose} className="font-medium">
                                 Cancelar
                             </Button>
-                            <Button color="primary" onPress={handleSubmit} className="font-bold">
-                                Añadir Comida
+                            <Button color="primary" radius="full" onPress={handleSubmit} className="font-semibold px-6">
+                                Añadir comida
                             </Button>
                         </ModalFooter>
                     </>

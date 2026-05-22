@@ -26,13 +26,13 @@ const MealList = ({ meals, addMeal, isLoading }: MealListProps) => {
     } = useMealList({ meals });
 
     return (
-        <div className="flex flex-col h-full bg-white dark:bg-background-dark">
-            <div className="p-6 flex flex-col gap-6 sticky top-0 bg-white dark:bg-background-dark z-10 border-b border-divider shadow-sm">
-                <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                        <span className="material-symbols-outlined text-primary text-lg">book</span>
+        <div className="flex flex-col h-full bg-white/40 dark:bg-transparent">
+            <div className="p-6 flex flex-col gap-5 sticky top-0 bg-white/80 dark:bg-[#211E1A]/80 backdrop-blur-sm z-10 border-b border-[#EAE1CE] dark:border-white/5">
+                <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-terracotta/10 flex items-center justify-center">
+                        <span className="material-symbols-outlined text-terracotta text-[18px]">menu_book</span>
                     </div>
-                    <h1 className="text-foreground text-xl font-extrabold tracking-tight display-font">Recetario</h1>
+                    <h1 className="font-display text-xl font-semibold text-ink dark:text-cream">Recetario</h1>
                 </div>
 
                 <Input
@@ -50,17 +50,16 @@ const MealList = ({ meals, addMeal, isLoading }: MealListProps) => {
                     onValueChange={setSearchTerm}
                 />
 
-                <div className="flex gap-2">
-                    <Button
-                        onPress={() => navigate('/recetas/nueva')}
-                        color="primary"
-                        variant="flat"
-                        className="flex-1 font-bold text-xs"
-                        startContent={<span className="material-symbols-outlined text-[18px]">add</span>}
-                    >
-                        Nueva Receta
-                    </Button>
-                </div>
+                <Button
+                    onPress={() => navigate('/recetas/nueva')}
+                    color="primary"
+                    variant="flat"
+                    radius="full"
+                    className="font-semibold text-sm text-terracotta"
+                    startContent={<span className="material-symbols-outlined text-[18px]">add</span>}
+                >
+                    Nueva receta
+                </Button>
 
                 <div className="flex flex-col gap-2">
                     <Tabs
@@ -70,10 +69,10 @@ const MealList = ({ meals, addMeal, isLoading }: MealListProps) => {
                         selectedKey={activeFilters[0] || "Todos"}
                         onSelectionChange={(key) => handleFilterChange(key === "Todos" ? ("" as any) : (key as MealType))}
                         classNames={{
-                            tabList: "gap-4 w-full relative rounded-none border-b border-divider p-0",
-                            cursor: "w-full bg-primary",
+                            tabList: "gap-4 w-full relative rounded-none border-b border-[#EAE1CE] dark:border-white/5 p-0",
+                            cursor: "w-full bg-terracotta",
                             tab: "max-w-fit px-0 h-8",
-                            tabContent: "group-data-[selected=true]:text-primary font-bold text-[11px] uppercase tracking-widest"
+                            tabContent: "group-data-[selected=true]:text-terracotta font-medium text-xs"
                         }}
                     >
                         <Tab key="Todos" title="Todos" />
@@ -86,18 +85,18 @@ const MealList = ({ meals, addMeal, isLoading }: MealListProps) => {
 
             <ScrollShadow className="flex-1 px-4 py-4 flex flex-col gap-3">
                 {isLoading ? (
-                    <div className="flex flex-col items-center justify-center h-full gap-4 text-default-500 py-12">
-                        <CircularProgress size="lg" aria-label="Loading..." />
-                        <p className="text-xs font-bold uppercase tracking-widest opacity-50">Cargando Recetario</p>
+                    <div className="flex flex-col items-center justify-center h-full gap-4 text-ink/40 py-12">
+                        <CircularProgress size="lg" aria-label="Cargando..." />
+                        <p className="text-xs font-medium opacity-60">Cargando recetario</p>
                     </div>
                 ) : filteredMeals.length > 0 ? (
                     filteredMeals.map(meal => (
                         <MealCard key={meal.id} meal={meal} />
                     ))
                 ) : (
-                    <div className="flex flex-col items-center justify-center py-12 text-default-400">
-                        <span className="material-symbols-outlined text-[48px] mb-4 opacity-10">lunch_dining</span>
-                        <p className="text-xs font-bold uppercase tracking-widest">No hay recetas</p>
+                    <div className="flex flex-col items-center justify-center py-16 text-ink/30 dark:text-cream/30">
+                        <span className="material-symbols-outlined text-[40px] mb-3">skillet</span>
+                        <p className="text-xs font-medium">Aún no hay recetas</p>
                     </div>
                 )}
             </ScrollShadow>

@@ -18,6 +18,15 @@ export const useShoppingList = ({
 }: UseShoppingListProps) => {
     const [newItem, setNewItem] = useState('');
     const [showCopyAlert, setShowCopyAlert] = useState(false);
+    const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set());
+
+    const toggleItem = (key: string) => {
+        setCheckedItems(prev => {
+            const next = new Set(prev);
+            next.has(key) ? next.delete(key) : next.add(key);
+            return next;
+        });
+    };
 
     const handleAddItem = (e: React.FormEvent) => {
         e.preventDefault();
@@ -29,12 +38,11 @@ export const useShoppingList = ({
     };
 
     const handleExport = () => {
-        const manual = manualIngredients.map(i => `- ${i.name} ${i.quantity ? `(${i.quantity})` : ''}`);
         const derived = derivedIngredients.map(i => `- ${i.name} (${i.quantities.join(', ')})`);
+        const manual = manualIngredients.map(i => `- ${i.name}${i.quantity ? ` (${i.quantity})` : ''}`);
         const text = [...derived, ...manual].join('\n');
 
         navigator.clipboard.writeText(text);
-
         setShowCopyAlert(true);
         setTimeout(() => setShowCopyAlert(false), 3000);
     };
@@ -46,6 +54,8 @@ export const useShoppingList = ({
         setNewItem,
         showCopyAlert,
         setShowCopyAlert,
+        checkedItems,
+        toggleItem,
         handleAddItem,
         handleExport,
         totalCount,

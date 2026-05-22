@@ -25,10 +25,10 @@ const MealCard = ({ meal, isOverlay = false }: MealCardProps) => {
             {...attributes}
             isPressable
             className={`
-                border-none bg-white dark:bg-white/5 shadow-sm
-                transition-all duration-200 group
-                ${isDragging ? 'cursor-grabbing ring-2 ring-primary scale-105 shadow-xl z-50' : 'cursor-grab'}
-                ${isOverlay ? 'cursor-grabbing shadow-2xl scale-105 z-50 ring-2 ring-primary/20' : ''}
+                border border-[#EFE8D8] dark:border-white/10 bg-white dark:bg-white/[0.04] shadow-card
+                transition-all duration-200 group rounded-2xl
+                ${isDragging ? 'cursor-grabbing ring-2 ring-terracotta scale-[1.03] shadow-soft z-50' : 'cursor-grab hover:border-terracotta/30'}
+                ${isOverlay ? 'cursor-grabbing shadow-soft scale-[1.03] z-50 ring-2 ring-terracotta/30' : ''}
             `}
         >
             <CardBody className="p-3">
@@ -40,7 +40,7 @@ const MealCard = ({ meal, isOverlay = false }: MealCardProps) => {
                                 <Chip
                                     key={t}
                                     size="sm"
-                                    className={`h-4 text-[8px] font-bold uppercase tracking-wider ${tagColors.bg} ${tagColors.text}`}
+                                    className={`h-[18px] text-[9px] font-semibold ${tagColors.bg} ${tagColors.text}`}
                                     variant="flat"
                                 >
                                     {t}
@@ -48,9 +48,9 @@ const MealCard = ({ meal, isOverlay = false }: MealCardProps) => {
                             );
                         })}
                     </div>
-                    <span className="material-symbols-outlined text-default-400 group-hover:text-primary text-[16px] transition-colors">drag_indicator</span>
+                    <span className="material-symbols-outlined text-ink/25 dark:text-cream/25 group-hover:text-terracotta text-[16px] transition-colors">drag_indicator</span>
                 </div>
-                <h4 className="text-xs font-semibold text-foreground leading-tight">{meal.name}</h4>
+                <h4 className="text-[13px] font-semibold text-ink dark:text-cream leading-tight">{meal.name}</h4>
             </CardBody>
         </Card>
     );

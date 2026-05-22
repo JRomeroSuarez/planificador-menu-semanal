@@ -6,7 +6,6 @@ import BasicInfo from './sections/BasicInfo';
 import IngredientsForm from './sections/IngredientsForm';
 import PreparationEditor from './sections/PreparationEditor';
 import ImageUploader from './sections/ImageUploader';
-import RecipeFooter from './sections/RecipeFooter';
 
 const AddRecipePage = () => {
     const {
@@ -77,8 +76,6 @@ const AddRecipePage = () => {
                     />
                 </div>
             </div>
-
-            <RecipeFooter />
         </main>
     );
 };

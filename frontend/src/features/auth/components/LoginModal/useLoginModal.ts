@@ -4,9 +4,10 @@ import { useAuthStore } from '@/features/auth/store/useAuthStore';
 interface UseLoginModalProps {
     isOpen: boolean;
     onClose: () => void;
+    onSuccess?: () => void;
 }
 
-export const useLoginModal = ({ isOpen, onClose }: UseLoginModalProps) => {
+export const useLoginModal = ({ isOpen, onClose, onSuccess }: UseLoginModalProps) => {
     const { login } = useAuthStore();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -27,7 +28,7 @@ export const useLoginModal = ({ isOpen, onClose }: UseLoginModalProps) => {
         setIsLoading(true);
         try {
             await login(username, password);
-            onClose();
+            onSuccess ? onSuccess() : onClose();
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Ocurrió un error inesperado.');
         } finally {

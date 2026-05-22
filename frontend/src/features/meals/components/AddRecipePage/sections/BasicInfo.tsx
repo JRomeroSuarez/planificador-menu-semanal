@@ -14,12 +14,12 @@ interface BasicInfoProps {
 
 const BasicInfo = ({ name, setName, types, setTypes, prepTime, setPrepTime, servings, setServings }: BasicInfoProps) => {
     return (
-        <section className="bg-white dark:bg-slate-900 border border-divider p-8 rounded-[2rem] shadow-sm">
+        <section className="bg-white dark:bg-white/[0.04] border border-[#EFE8D8] dark:border-white/10 p-8 rounded-[2rem] shadow-card">
             <div className="flex items-center gap-3 mb-8">
-                <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
-                    <span className="material-symbols-outlined text-lg font-bold">info</span>
+                <div className="w-8 h-8 bg-terracotta/10 rounded-xl flex items-center justify-center text-terracotta">
+                    <span className="material-symbols-outlined text-[18px]">info</span>
                 </div>
-                <h3 className="text-lg font-black uppercase tracking-tight">Información Básica</h3>
+                <h3 className="font-display text-lg font-semibold text-ink dark:text-cream">Información básica</h3>
             </div>
             <div className="space-y-6">
                 <Input

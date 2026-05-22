@@ -1,11 +1,11 @@
 import { Suspense, lazy } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { useUIStore } from '@/store/useUIStore';
 import { useAuthStore } from '@/features/auth/store/useAuthStore';
 import Header from '@/layouts/Header';
 import LoginModal from '@/features/auth/components/LoginModal';
 import RegisterModal from '@/features/auth/components/RegisterModal';
-import AuthScreen from '@/features/auth/components/AuthScreen';
+import LandingPage from '@/features/auth/components/LandingPage';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 const PlannerView = lazy(() => import('@/features/planner/components/PlannerView'));
@@ -19,8 +19,15 @@ const PageLoader = () => (
     </div>
 );
 
+const RequireAuth = ({ children }: { children: React.ReactNode }) => {
+    const { isAuthenticated } = useAuthStore();
+    if (!isAuthenticated) return <Navigate to="/" replace />;
+    return <>{children}</>;
+};
+
 const AppContent = () => {
     const { isAuthenticated } = useAuthStore();
+    const navigate = useNavigate();
     const {
         isLoginModalOpen,
         isRegisterModalOpen,
@@ -30,36 +37,67 @@ const AppContent = () => {
         closeRegister,
     } = useUIStore();
 
+    const handleLoginSuccess = () => {
+        closeLogin();
+        navigate('/planificador');
+    };
+
+    const handleRegisterSuccess = () => {
+        closeRegister();
+        navigate('/planificador');
+    };
+
     return (
         <div className="flex flex-col min-h-screen">
             <Header />
 
-            {!isAuthenticated ? (
-                <AuthScreen onLoginClick={openLogin} onRegisterClick={openRegister} />
-            ) : (
-                <ErrorBoundary>
-                    <Suspense fallback={<PageLoader />}>
-                        <Routes>
-                            <Route path="/" element={<PlannerView />} />
-                            <Route path="/recetas" element={<RecipesCatalog />} />
-                            <Route path="/recetas/nueva" element={<AddRecipePage />} />
-                            <Route path="/recetas/editar/:id" element={<AddRecipePage />} />
-                            <Route path="/recetas/:id" element={<RecipeDetail />} />
-                            <Route path="*" element={<Navigate to="/" replace />} />
-                        </Routes>
-                    </Suspense>
-                </ErrorBoundary>
-            )}
+            <ErrorBoundary>
+                <Suspense fallback={<PageLoader />}>
+                    <Routes>
+                        <Route
+                            path="/"
+                            element={
+                                isAuthenticated
+                                    ? <Navigate to="/planificador" replace />
+                                    : <LandingPage onLoginClick={openLogin} onRegisterClick={openRegister} />
+                            }
+                        />
+                        <Route
+                            path="/planificador"
+                            element={<RequireAuth><PlannerView /></RequireAuth>}
+                        />
+                        <Route
+                            path="/recetas"
+                            element={<RequireAuth><RecipesCatalog /></RequireAuth>}
+                        />
+                        <Route
+                            path="/recetas/nueva"
+                            element={<RequireAuth><AddRecipePage /></RequireAuth>}
+                        />
+                        <Route
+                            path="/recetas/editar/:id"
+                            element={<RequireAuth><AddRecipePage /></RequireAuth>}
+                        />
+                        <Route
+                            path="/recetas/:id"
+                            element={<RequireAuth><RecipeDetail /></RequireAuth>}
+                        />
+                        <Route path="*" element={<Navigate to="/" replace />} />
+                    </Routes>
+                </Suspense>
+            </ErrorBoundary>
 
             <LoginModal
                 isOpen={isLoginModalOpen}
                 onClose={closeLogin}
                 onSwitchToRegister={openRegister}
+                onSuccess={handleLoginSuccess}
             />
             <RegisterModal
                 isOpen={isRegisterModalOpen}
                 onClose={closeRegister}
                 onSwitchToLogin={openLogin}
+                onSuccess={handleRegisterSuccess}
             />
         </div>
     );

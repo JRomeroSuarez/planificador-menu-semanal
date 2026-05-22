@@ -13,8 +13,19 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                "display": ["Work Sans", "sans-serif"],
+                "display": ["Fraunces", "Georgia", "serif"],
                 "sans": ["Inter", "sans-serif"]
+            },
+            colors: {
+                cream: "#FBF7F0",
+                terracotta: "#E07A5F",
+                olive: "#81A263",
+                mustard: "#F2CC8F",
+                ink: "#2D2A26",
+            },
+            boxShadow: {
+                soft: "0 4px 20px -4px rgba(45, 42, 38, 0.08)",
+                card: "0 2px 12px -2px rgba(45, 42, 38, 0.06)",
             },
         },
     },
@@ -24,21 +35,57 @@ export default {
             themes: {
                 light: {
                     colors: {
-                        background: "#f9fafb",
-                        foreground: "#0f172a",
+                        background: "#FBF7F0",
+                        foreground: "#2D2A26",
                         primary: {
-                            DEFAULT: "#3713ec",
+                            DEFAULT: "#E07A5F",
                             foreground: "#ffffff",
+                        },
+                        secondary: {
+                            DEFAULT: "#81A263",
+                            foreground: "#ffffff",
+                        },
+                        success: {
+                            DEFAULT: "#81A263",
+                            foreground: "#ffffff",
+                        },
+                        warning: {
+                            DEFAULT: "#F2CC8F",
+                            foreground: "#2D2A26",
+                        },
+                        default: {
+                            50: "#F5F0E8",
+                            100: "#ECE5D8",
+                            200: "#DDD3BF",
+                            300: "#C9BCA0",
+                            400: "#A89B7D",
+                            500: "#857A5F",
+                            600: "#635A45",
+                            700: "#453F30",
+                            foreground: "#2D2A26",
+                            DEFAULT: "#ECE5D8",
                         },
                     },
                 },
                 dark: {
                     colors: {
-                        background: "#131022",
-                        foreground: "#ffffff",
+                        background: "#211E1A",
+                        foreground: "#F5F0E8",
                         primary: {
-                            DEFAULT: "#3713ec",
+                            DEFAULT: "#E07A5F",
                             foreground: "#ffffff",
+                        },
+                        secondary: {
+                            DEFAULT: "#81A263",
+                            foreground: "#ffffff",
+                        },
+                        success: {
+                            DEFAULT: "#81A263",
+                            foreground: "#ffffff",
+                        },
+                        warning: {
+                            DEFAULT: "#F2CC8F",
+                            foreground: "#2D2A26",
                         },
                     },
                 },

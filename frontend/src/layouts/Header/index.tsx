@@ -1,8 +1,7 @@
 import { NavLink } from 'react-router-dom';
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Avatar } from "@heroui/react";
+import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Avatar } from "@heroui/react";
 import { useAuthStore } from "@/features/auth/store/useAuthStore";
 import { useUIStore } from "@/store/useUIStore";
-
 import { useShoppingListStore } from "@/features/shopping/store/useShoppingListStore";
 
 const Header = () => {
@@ -12,88 +11,72 @@ const Header = () => {
     const itemCount = useShoppingListStore(state => state.items.filter(i => !i.checked).length);
 
     return (
-        <Navbar isBordered maxWidth="full" className="bg-white/80 dark:bg-background-dark/80 backdrop-blur-md">
+        <Navbar maxWidth="full" className="bg-cream/85 dark:bg-[#211E1A]/85 backdrop-blur-md border-b border-[#EAE1CE] dark:border-white/5">
             <NavbarBrand>
-                <NavLink to="/" className="flex items-center gap-2">
-                    <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
-                        <span className="material-symbols-outlined text-white">restaurant_menu</span>
+                <NavLink to={isAuthenticated ? "/planificador" : "/"} className="flex items-center gap-2.5">
+                    <div className="w-9 h-9 bg-terracotta rounded-2xl flex items-center justify-center shadow-soft">
+                        <span className="material-symbols-outlined text-white text-[20px]">restaurant</span>
                     </div>
-                    <div className="hidden sm:block">
-                        <p className="font-black text-foreground text-lg tracking-tight">SMART MENU</p>
-                        <p className="text-[10px] font-bold text-default-400 -mt-1 uppercase tracking-widest">Planner Pro</p>
-                    </div>
+                    <p className="font-display font-semibold text-ink dark:text-cream text-lg hidden sm:block">Menú semanal</p>
                 </NavLink>
             </NavbarBrand>
 
-            <NavbarContent className="hidden sm:flex gap-8" justify="center">
-                <NavbarItem>
-                    <NavLink
-                        to="/"
-                        className={({ isActive }) =>
-                            `text-sm font-bold transition-colors ${isActive ? 'text-primary' : 'text-foreground/60 hover:text-primary'}`
-                        }
-                    >
-                        Planificador
-                    </NavLink>
-                </NavbarItem>
-                <NavbarItem>
-                    <NavLink
-                        to="/recetas"
-                        className={({ isActive }) =>
-                            `text-sm font-bold transition-colors ${isActive ? 'text-primary' : 'text-foreground/60 hover:text-primary'}`
-                        }
-                    >
-                        Recetario
-                    </NavLink>
-                </NavbarItem>
-            </NavbarContent>
+            {isAuthenticated && (
+                <NavbarContent className="hidden sm:flex gap-8" justify="center">
+                    <NavbarItem>
+                        <NavLink
+                            to="/planificador"
+                            className={({ isActive }) =>
+                                `text-sm font-medium transition-colors ${isActive ? 'text-terracotta' : 'text-ink/55 dark:text-cream/55 hover:text-terracotta'}`
+                            }
+                        >
+                            Planificador
+                        </NavLink>
+                    </NavbarItem>
+                    <NavbarItem>
+                        <NavLink
+                            to="/recetas"
+                            className={({ isActive }) =>
+                                `text-sm font-medium transition-colors ${isActive ? 'text-terracotta' : 'text-ink/55 dark:text-cream/55 hover:text-terracotta'}`
+                            }
+                        >
+                            Recetario
+                        </NavLink>
+                    </NavbarItem>
+                </NavbarContent>
+            )}
 
             <NavbarContent justify="end">
-                <NavbarItem>
-                    <Button
-                        isIconOnly
-                        variant="light"
-                        onPress={openShoppingList}
-                        className="relative"
-                    >
-                        <span className="material-symbols-outlined text-default-600">shopping_cart</span>
-                        {itemCount > 0 && (
-                            <span className="absolute top-2 right-2 w-2 h-2 bg-danger rounded-full ring-2 ring-white dark:ring-background-dark animate-pulse shadow-sm" />
-                        )}
-                    </Button>
-                </NavbarItem>
+                {isAuthenticated && (
+                    <NavbarItem>
+                        <Button
+                            isIconOnly
+                            variant="light"
+                            onPress={openShoppingList}
+                            className="relative"
+                        >
+                            <span className="material-symbols-outlined text-ink/60 dark:text-cream/60">shopping_basket</span>
+                            {itemCount > 0 && (
+                                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-terracotta rounded-full ring-2 ring-cream dark:ring-[#211E1A]" />
+                            )}
+                        </Button>
+                    </NavbarItem>
+                )}
 
                 {isAuthenticated ? (
                     <Dropdown placement="bottom-end">
                         <DropdownTrigger>
                             <Avatar
-                                isBordered
                                 as="button"
-                                className="transition-transform"
-                                color="primary"
-                                name={user?.username}
+                                className="transition-transform bg-terracotta text-white font-display font-semibold"
+                                name={user?.username?.charAt(0).toUpperCase()}
                                 size="sm"
-                                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.username}`}
                             />
                         </DropdownTrigger>
                         <DropdownMenu aria-label="Profile Actions" variant="flat">
                             <DropdownItem key="profile" className="h-14 gap-2">
-                                <p className="font-bold">Sesión iniciada como</p>
-                                <p className="font-semibold text-primary">@{user?.username}</p>
-                            </DropdownItem>
-                            <DropdownItem
-                                key="settings"
-                                startContent={<span className="material-symbols-outlined text-lg opacity-60">settings</span>}
-                                description="Gestionar tus preferencias"
-                            >
-                                Ajustes
-                            </DropdownItem>
-                            <DropdownItem
-                                key="help"
-                                startContent={<span className="material-symbols-outlined text-lg opacity-60">help</span>}
-                                description="Preguntas frecuentes y soporte"
-                            >
-                                Ayuda & Feedback
+                                <p className="text-default-500 text-xs">Sesión iniciada como</p>
+                                <p className="font-semibold text-terracotta">@{user?.username}</p>
                             </DropdownItem>
                             <DropdownItem
                                 key="logout"
@@ -109,12 +92,14 @@ const Header = () => {
                     </Dropdown>
                 ) : (
                     <>
-                        <NavbarItem className="hidden lg:flex">
-                            <Link href="#" onPress={openLogin} className="text-sm font-bold text-foreground">Login</Link>
+                        <NavbarItem>
+                            <Button onPress={openLogin} variant="light" className="font-medium text-sm text-ink/70 dark:text-cream/70">
+                                Entrar
+                            </Button>
                         </NavbarItem>
                         <NavbarItem>
-                            <Button onPress={openRegister} color="primary" variant="flat" className="font-bold text-sm px-6">
-                                Sign Up
+                            <Button onPress={openRegister} color="primary" radius="full" className="font-semibold text-sm px-6 shadow-soft">
+                                Registrarse
                             </Button>
                         </NavbarItem>
                     </>
