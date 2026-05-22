@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Button, Card, Chip, Checkbox, Image, CircularProgress, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@heroui/react";
 import { useRecipeDetail } from './useRecipeDetail';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
-import { useShoppingListStore } from "@/features/shopping/store/useShoppingListStore";
+import { usePlannerStore } from "@/features/planner/store/usePlannerStore";
+import { useUIStore } from "@/store/useUIStore";
 
 const RecipePlaceholder = ({ name }: { name: string }) => (
     <div className="w-full h-full bg-gradient-to-br from-terracotta/15 via-mustard/10 to-olive/10 flex items-center justify-center">
@@ -17,14 +18,16 @@ const RecipeDetail = () => {
     const { meal, isLoading, deleteRecipe } = useRecipeDetail();
     const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();
-    const addItem = useShoppingListStore(state => state.addItem);
+    const addManualIngredient = usePlannerStore(state => state.addManualIngredient);
+    const openShoppingList = useUIStore(state => state.openShoppingList);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [addedToList, setAddedToList] = useState(false);
 
     const handleAddIngredientsToShoppingList = () => {
         if (!meal) return;
-        meal.ingredients.forEach(ing => addItem(ing.name, ing.quantity));
+        meal.ingredients.forEach(ing => addManualIngredient({ name: ing.name, quantity: ing.quantity }));
+        openShoppingList();
         setAddedToList(true);
         setTimeout(() => setAddedToList(false), 2000);
     };

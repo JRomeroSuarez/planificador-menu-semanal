@@ -6,6 +6,7 @@ import Header from '@/layouts/Header';
 import LoginModal from '@/features/auth/components/LoginModal';
 import RegisterModal from '@/features/auth/components/RegisterModal';
 import LandingPage from '@/features/auth/components/LandingPage';
+import ShoppingListDrawer from '@/features/shopping/components/ShoppingListDrawer';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 const PlannerView = lazy(() => import('@/features/planner/components/PlannerView'));
@@ -99,6 +100,7 @@ const AppContent = () => {
                 onSwitchToLogin={openLogin}
                 onSuccess={handleRegisterSuccess}
             />
+            {isAuthenticated && <ShoppingListDrawer />}
         </div>
     );
 };

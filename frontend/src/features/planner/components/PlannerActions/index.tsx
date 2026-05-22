@@ -1,13 +1,25 @@
+import { useMemo } from 'react';
 import { Button, Tooltip, Badge } from "@heroui/react";
+import { useUIStore } from '@/store/useUIStore';
+import { usePlannerStore } from '@/features/planner/store/usePlannerStore';
+import { deriveShoppingList } from '@/features/shopping/selectors/derivedShoppingList';
 
 interface PlannerActionsProps {
     onPrint: () => void;
-    onOpenShoppingList: () => void;
-    shoppingListCount: number;
     isSyncing: boolean;
 }
 
-const PlannerActions = ({ onPrint, onOpenShoppingList, shoppingListCount, isSyncing }: PlannerActionsProps) => {
+const PlannerActions = ({ onPrint, isSyncing }: PlannerActionsProps) => {
+    const openShoppingList = useUIStore(state => state.openShoppingList);
+    const weeklyPlan = usePlannerStore(state => state.weeklyPlan);
+    const ignoredIngredients = usePlannerStore(state => state.ignoredIngredients);
+    const manualIngredients = usePlannerStore(state => state.manualIngredients);
+
+    const shoppingListCount = useMemo(
+        () => deriveShoppingList(weeklyPlan, ignoredIngredients).length + manualIngredients.length,
+        [weeklyPlan, ignoredIngredients, manualIngredients]
+    );
+
     return (
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 no-print gap-4">
             <div>
@@ -31,7 +43,7 @@ const PlannerActions = ({ onPrint, onOpenShoppingList, shoppingListCount, isSync
                 <Tooltip content="Ver lista de la compra">
                     <Badge content={shoppingListCount} color="primary" isInvisible={shoppingListCount === 0} shape="circle">
                         <Button
-                            onPress={onOpenShoppingList}
+                            onPress={openShoppingList}
                             color="primary"
                             variant="flat"
                             radius="full"

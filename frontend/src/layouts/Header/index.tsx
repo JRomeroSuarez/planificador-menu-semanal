@@ -1,14 +1,22 @@
+import { useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Avatar } from "@heroui/react";
 import { useAuthStore } from "@/features/auth/store/useAuthStore";
 import { useUIStore } from "@/store/useUIStore";
-import { useShoppingListStore } from "@/features/shopping/store/useShoppingListStore";
+import { usePlannerStore } from "@/features/planner/store/usePlannerStore";
+import { deriveShoppingList } from "@/features/shopping/selectors/derivedShoppingList";
 
 const Header = () => {
     const { isAuthenticated, user, logout } = useAuthStore();
     const { openLogin, openRegister, openShoppingList } = useUIStore();
+    const weeklyPlan = usePlannerStore(state => state.weeklyPlan);
+    const ignoredIngredients = usePlannerStore(state => state.ignoredIngredients);
+    const manualIngredients = usePlannerStore(state => state.manualIngredients);
 
-    const itemCount = useShoppingListStore(state => state.items.filter(i => !i.checked).length);
+    const itemCount = useMemo(
+        () => deriveShoppingList(weeklyPlan, ignoredIngredients).length + manualIngredients.length,
+        [weeklyPlan, ignoredIngredients, manualIngredients]
+    );
 
     return (
         <Navbar maxWidth="full" className="bg-cream/85 dark:bg-[#211E1A]/85 backdrop-blur-md border-b border-[#EAE1CE] dark:border-white/5">

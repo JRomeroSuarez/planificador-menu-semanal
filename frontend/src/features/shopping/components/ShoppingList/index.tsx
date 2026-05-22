@@ -1,17 +1,23 @@
+import { useMemo } from 'react';
 import { Button, Input, ScrollShadow, Divider, Alert } from "@heroui/react";
-import { Ingredient } from '@/types';
 import ShoppingListItem from './ShoppingListItem';
 import { useShoppingList } from '../../hooks/useShoppingList';
+import { usePlannerStore } from '@/features/planner/store/usePlannerStore';
+import { deriveShoppingList } from '../../selectors/derivedShoppingList';
 
-interface ShoppingListProps {
-    derivedIngredients: { name: string; quantities: string[]; }[];
-    manualIngredients: Ingredient[];
-    onAddIngredient: (ingredient: Ingredient) => void;
-    onRemoveManualIngredient: (index: number) => void;
-    onRemoveDerivedIngredient: (name: string) => void;
-}
+const ShoppingList = () => {
+    const weeklyPlan = usePlannerStore(state => state.weeklyPlan);
+    const ignoredIngredients = usePlannerStore(state => state.ignoredIngredients);
+    const manualIngredients = usePlannerStore(state => state.manualIngredients);
+    const addManualIngredient = usePlannerStore(state => state.addManualIngredient);
+    const removeManualIngredient = usePlannerStore(state => state.removeManualIngredient);
+    const ignoreDerivedIngredient = usePlannerStore(state => state.ignoreDerivedIngredient);
 
-const ShoppingList = (props: ShoppingListProps) => {
+    const derivedIngredients = useMemo(
+        () => deriveShoppingList(weeklyPlan, ignoredIngredients),
+        [weeklyPlan, ignoredIngredients]
+    );
+
     const {
         newItem,
         setNewItem,
@@ -22,11 +28,13 @@ const ShoppingList = (props: ShoppingListProps) => {
         handleAddItem,
         handleExport,
         totalCount,
-        onRemoveManualIngredient,
-        onRemoveDerivedIngredient
-    } = useShoppingList(props);
-
-    const { derivedIngredients, manualIngredients } = props;
+    } = useShoppingList({
+        derivedIngredients,
+        manualIngredients,
+        onAddIngredient: addManualIngredient,
+        onRemoveManualIngredient: removeManualIngredient,
+        onRemoveDerivedIngredient: ignoreDerivedIngredient,
+    });
 
     return (
         <div className="flex flex-col h-full bg-white dark:bg-[#211E1A] p-6 gap-6 relative">
@@ -70,7 +78,7 @@ const ShoppingList = (props: ShoppingListProps) => {
                                                 quantity={item.quantities.join(', ')}
                                                 checked={checkedItems.has(key)}
                                                 onToggle={() => toggleItem(key)}
-                                                onRemove={() => onRemoveDerivedIngredient(item.name)}
+                                                onRemove={() => ignoreDerivedIngredient(item.name)}
                                             />
                                         );
                                     })}
@@ -91,7 +99,7 @@ const ShoppingList = (props: ShoppingListProps) => {
                                                 quantity={item.quantity}
                                                 checked={checkedItems.has(key)}
                                                 onToggle={() => toggleItem(key)}
-                                                onRemove={() => onRemoveManualIngredient(index)}
+                                                onRemove={() => removeManualIngredient(index)}
                                             />
                                         );
                                     })}

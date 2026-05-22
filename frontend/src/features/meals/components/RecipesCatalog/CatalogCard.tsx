@@ -2,7 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardBody, Button, Chip } from "@heroui/react";
 import { Meal, MealType } from '@/types';
 import { MealTypeColors } from '@/utils/constants';
-import { useShoppingListStore } from "@/features/shopping/store/useShoppingListStore";
+import { usePlannerStore } from "@/features/planner/store/usePlannerStore";
+import { useUIStore } from "@/store/useUIStore";
 
 interface CatalogCardProps {
     meal: Meal;
@@ -19,11 +20,13 @@ const RecipePlaceholder = ({ name }: { name: string }) => (
 
 const CatalogCard = ({ meal }: CatalogCardProps) => {
     const navigate = useNavigate();
-    const addItem = useShoppingListStore(state => state.addItem);
+    const addManualIngredient = usePlannerStore(state => state.addManualIngredient);
+    const openShoppingList = useUIStore(state => state.openShoppingList);
 
     const handleAddToCart = (e: React.MouseEvent) => {
         e.stopPropagation();
-        meal.ingredients.forEach(ing => addItem(ing.name, ing.quantity));
+        meal.ingredients.forEach(ing => addManualIngredient({ name: ing.name, quantity: ing.quantity }));
+        openShoppingList();
     };
 
     return (
